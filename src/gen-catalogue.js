@@ -24,7 +24,7 @@ for (const k of [2, 3, 4]) {
     })),
   };
 }
-writeFileSync('../data/catalogue.json', JSON.stringify(out, null, 1));
+writeFileSync('../data/catalogue.json', JSON.stringify(out, null, 1) + '\n');
 
 // CSV for the article's tables
 const rows = ['id,name,intervals,partner,retrograde_of,degenerate,reduces_to,'
