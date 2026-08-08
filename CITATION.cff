@@ -49,14 +49,14 @@ references:
       orchestral film score De Voortrekkers (2016), the last generated
       entirely from seven such cycles used leitmotivically.
 
-  # --- Earliest public statement. TODO: confirm exact title and dates ---
+  # --- Earliest public statement. ---
   - type: conference-paper
     authors:
       - family-names: Jeffery
         given-names: Christopher
-    title: "[TITLE TO CONFIRM]"
+    title: "Circular symmetry: symmetrical twelve-note modes of alternating intervals, and their place in musical practice"
     conference:
-      name: "South African Society for Research in Music (SASRIM)"
+      name: "South African Society for Research in Music (SASRIM), Tshwane University of Technology"
     year: 2012
     notes: "Earliest public presentation of the theory."
 
