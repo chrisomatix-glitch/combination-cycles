@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combination Cycles — the two-interval circle</title>
+<meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles.">
+<link rel="stylesheet" href="app/styles.css">
+</head>
+<body>
+<main class="app">
+  <header class="app__header">
+    <h1>Combination Cycles</h1>
+    <p class="app__subtitle">Two-interval mode</p>
+  </header>
+
+  <div class="layout">
+    <section class="dials" id="dials" aria-label="Interval dials"></section>
+
+    <section class="circle-wrap">
+      <div
+        class="circle-holder"
+        id="circle-holder"
+        tabindex="0"
+        role="group"
+        aria-label="Circle of fifths. The outer diamond ring is movable. Drag it, use the rotate buttons, or press the left and right arrow keys while this is focused."
+      ></div>
+
+      <div class="circle-controls">
+        <button type="button" class="btn btn--icon" id="rotate-left" aria-label="Rotate movable ring left">◂</button>
+        <button type="button" class="btn" id="reverse-direction">Reverse direction</button>
+        <button type="button" class="btn btn--icon" id="rotate-right" aria-label="Rotate movable ring right">▸</button>
+      </div>
+
+      <p class="hint">
+        Reversing direction reads the same twelve connections the other way
+        round — the same shape, mirrored — and lands on a different
+        catalogue entry.
+      </p>
+    </section>
+  </div>
+
+  <section class="readout" aria-live="polite">
+    <div class="readout__id"></div>
+    <div class="readout__name"></div>
+    <div class="readout__berliner"></div>
+    <span class="readout__badge" hidden></span>
+  </section>
+</main>
+
+<script type="module">
+  import * as CC from './src/cycles.js';
+  import {
+    initState, subscribe, rotateMovable, reverse, setDialValue, reloadFromLocation,
+  } from './app/state.js';
+  import { mountCircle } from './app/circle.js';
+  import { mountDials } from './app/dials.js';
+
+  const CATALOGUE = CC.buildCatalogue(2);
+
+  const circle = mountCircle(document.getElementById('circle-holder'), { onRotate: rotateMovable });
+  const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
+
+  const readout = {
+    id: document.querySelector('.readout__id'),
+    name: document.querySelector('.readout__name'),
+    berliner: document.querySelector('.readout__berliner'),
+    badge: document.querySelector('.readout__badge'),
+  };
+
+  function renderReadout(state) {
+    const entry = CC.identify(state.intervals, CATALOGUE);
+    readout.id.textContent = entry.id;
+    readout.name.textContent = entry.name;
+    readout.berliner.textContent = entry.berliner
+      ? `Berliner et al. ${entry.berliner}`
+      : 'No Berliner concordance (degenerate)';
+    readout.badge.hidden = !entry.degenerate;
+    readout.badge.textContent = entry.degenerate ? `Reducible to ${entry.reducesTo}` : '';
+  }
+
+  function renderAll(state, meta) {
+    circle.render(state, meta);
+    dials.render(state, meta);
+    renderReadout(state);
+  }
+
+  subscribe(renderAll);
+  renderAll(initState(), { type: 'init' });
+
+  document.getElementById('rotate-left').addEventListener('click', () => rotateMovable(-1));
+  document.getElementById('rotate-right').addEventListener('click', () => rotateMovable(1));
+  document.getElementById('reverse-direction').addEventListener('click', () => reverse());
+
+  document.getElementById('circle-holder').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); rotateMovable(-1); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); rotateMovable(1); }
+  });
+
+  window.addEventListener('popstate', () => renderAll(reloadFromLocation(), { type: 'init' }));
+</script>
+</body>
+</html>
