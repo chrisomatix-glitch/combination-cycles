@@ -1,0 +1,18 @@
+{
+  "upload_type": "software",
+  "license": "MIT",
+  "related_identifiers": [
+    {
+      "identifier": "http://hdl.handle.net/11427/27459",
+      "relation": "isDerivedFrom",
+      "scheme": "url",
+      "resource_type": "publication-thesis"
+    },
+    {
+      "identifier": "https://doi.org/10.1080/17459737.2018.1453950",
+      "relation": "references",
+      "scheme": "doi",
+      "resource_type": "publication-article"
+    }
+  ]
+}
