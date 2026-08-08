@@ -1,0 +1,33 @@
+name: tests
+
+# Runs the engine's test suite in GitHub's cloud on every push, so the
+# enumeration can be verified without a local Node installation.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run test suite
+        run: npm test
+
+      - name: Check the catalogue matches the engine
+        run: |
+          npm run catalogue
+          if ! git diff --quiet data/; then
+            echo "::error::data/ is out of date. Run 'npm run catalogue' and commit the result."
+            git diff --stat data/
+            exit 1
+          fi
+          echo "Catalogue is up to date."
