@@ -73,6 +73,10 @@ npm test          # 91 assertions
 npm run catalogue # regenerate data/catalogue.{json,csv}
 ```
 
+The suite also runs automatically on every push via GitHub Actions, so a
+green tick on a commit means the enumeration, the PDF diff and the Berliner
+concordance all still agree.
+
 `docs/SPEC.md` is the full implementation reference.
 
 ## Verification

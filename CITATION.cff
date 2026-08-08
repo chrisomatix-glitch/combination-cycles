@@ -1,0 +1,86 @@
+cff-version: 1.2.0
+title: "Combination Cycles: enumeration and catalogue of symmetrical twelve-note interval cycles"
+message: "If you use this software or catalogue, please cite it. The underlying theory is set out in the author's 2017 doctoral portfolio, listed first under references."
+type: software
+authors:
+  - family-names: Jeffery
+    given-names: Christopher
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # fill in
+    # affiliation: ""                                   # fill in
+repository-code: "https://github.com/USERNAME/combination-cycles"
+url: "https://chrisjeffery.co.za"
+abstract: >-
+  An engine for enumerating, cataloguing and realising symmetrical twelve-note
+  combination cycles: cycles of two or more alternating intervals that traverse
+  all twelve pitch classes exactly once before returning to the starting note.
+  It implements the theory the author developed across the compositions of his
+  2017 doctoral portfolio, where the term "combination cycle" is defined and the
+  twelve-note cyclical forms are applied compositionally. It adds a catalogue
+  and naming scheme, register placement, serial row forms, and a concordance
+  with the independent mathematical enumeration of Berliner et al. (2018).
+keywords:
+  - music theory
+  - interval cycles
+  - combination cycles
+  - post-tonal theory
+  - modes of limited transposition
+  - twelve-tone
+license: MIT
+version: 0.1.0
+date-released: 2026-08-08
+references:
+  # --- The author's prior statement of the theory ---
+  - type: thesis
+    authors:
+      - family-names: Jeffery
+        given-names: Christopher
+    title: "Portfolio of Original Compositions"
+    thesis-type: "DMus (Composition) portfolio"
+    institution:
+      name: "South African College of Music, University of Cape Town"
+    year: 2017
+    month: 10
+    url: "https://open.uct.ac.za/handle/11427/27428"
+    notes: >-
+      Defines the term "combination cycle" and sets out the twelve-note
+      cyclical forms, including the whole-tone constraint on two-interval
+      cycles. Applies them compositionally in Movement for Viola and Piano
+      (2010), The Outer Edges (2011), String Quartet (2014-15) and the
+      orchestral film score De Voortrekkers (2016), the last generated
+      entirely from seven such cycles used leitmotivically.
+
+  # --- Earliest public statement. TODO: confirm exact title and dates ---
+  - type: conference-paper
+    authors:
+      - family-names: Jeffery
+        given-names: Christopher
+    title: "[TITLE TO CONFIRM]"
+    conference:
+      name: "South African Society for Research in Music (SASRIM)"
+    year: 2012
+    notes: "Earliest public presentation of the theory."
+
+  # --- Independent mathematical treatment ---
+  - type: article
+    authors:
+      - family-names: Berliner
+        given-names: "Adam H."
+      - family-names: Castro
+        given-names: David
+      - family-names: Merritt
+        given-names: Justin
+      - family-names: Southard
+        given-names: Christopher
+    title: "Expanded interval cycles"
+    journal: "Journal of Mathematics and Music"
+    volume: 12
+    issue: 1
+    start: 21
+    end: 33
+    year: 2018
+    doi: "10.1080/17459737.2018.1453950"
+    notes: >-
+      Independent and more rigorous mathematical development, giving necessary
+      and sufficient conditions and complete enumeration tables. Does not
+      address inversional distinctions, compositional application, or the
+      relationship to Messiaen's modes of limited transposition.

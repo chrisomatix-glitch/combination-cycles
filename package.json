@@ -1,0 +1,14 @@
+{
+  "name": "combination-cycles",
+  "version": "0.1.0",
+  "description": "Symmetrical twelve-note combination cycles: enumeration, catalogue and realisation engine",
+  "type": "module",
+  "main": "src/cycles.js",
+  "license": "MIT",
+  "author": "Chris Jeffery",
+  "homepage": "https://chrisjeffery.co.za",
+  "scripts": {
+    "test": "node src/cycles.test.js",
+    "catalogue": "cd src && node gen-catalogue.js"
+  }
+}

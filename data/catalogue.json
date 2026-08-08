@@ -1,0 +1,2231 @@
+{
+ "generated": "2026-08-08",
+ "families": {
+  "2": {
+   "ordinals": 4,
+   "entries": 8,
+   "genuine": 4,
+   "berlinerClasses": 2,
+   "cycles": [
+    {
+     "id": "2-1",
+     "name": "m2-m2",
+     "intervals": [
+      1,
+      1
+     ],
+     "partner": "2-1I",
+     "retrogradeOf": "2-1I",
+     "degenerate": true,
+     "reducesTo": "m2",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 12,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-1I",
+     "name": "M7-M7",
+     "intervals": [
+      11,
+      11
+     ],
+     "partner": "2-1",
+     "retrogradeOf": "2-1",
+     "degenerate": true,
+     "reducesTo": "M7",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 132,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-2",
+     "name": "m2-M6",
+     "intervals": [
+      1,
+      9
+     ],
+     "partner": "2-2I",
+     "retrogradeOf": "2-2I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "2-1",
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-2I",
+     "name": "m3-M7",
+     "intervals": [
+      3,
+      11
+     ],
+     "partner": "2-2",
+     "retrogradeOf": "2-2",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "2-1",
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-3",
+     "name": "m3-P5",
+     "intervals": [
+      3,
+      7
+     ],
+     "partner": "2-3I",
+     "retrogradeOf": "2-3I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "2-2",
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-3I",
+     "name": "P4-M6",
+     "intervals": [
+      5,
+      9
+     ],
+     "partner": "2-3",
+     "retrogradeOf": "2-3",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "2-2",
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-4",
+     "name": "P4-P4",
+     "intervals": [
+      5,
+      5
+     ],
+     "partner": "2-4I",
+     "retrogradeOf": "2-4I",
+     "degenerate": true,
+     "reducesTo": "P4",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "2-4I",
+     "name": "P5-P5",
+     "intervals": [
+      7,
+      7
+     ],
+     "partner": "2-4",
+     "retrogradeOf": "2-4",
+     "degenerate": true,
+     "reducesTo": "P5",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    }
+   ]
+  },
+  "3": {
+   "ordinals": 12,
+   "entries": 24,
+   "genuine": 20,
+   "berlinerClasses": 8,
+   "cycles": [
+    {
+     "id": "3-1",
+     "name": "m2-m2-m2",
+     "intervals": [
+      1,
+      1,
+      1
+     ],
+     "partner": "3-1I",
+     "retrogradeOf": "3-1I",
+     "degenerate": true,
+     "reducesTo": "m2",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 12,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-1I",
+     "name": "M7-M7-M7",
+     "intervals": [
+      11,
+      11,
+      11
+     ],
+     "partner": "3-1",
+     "retrogradeOf": "3-1",
+     "degenerate": true,
+     "reducesTo": "M7",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 132,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-2",
+     "name": "m2-m2-P5",
+     "intervals": [
+      1,
+      1,
+      7
+     ],
+     "partner": "3-2I",
+     "retrogradeOf": "3-2I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-1",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 36,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-2I",
+     "name": "P4-M7-M7",
+     "intervals": [
+      5,
+      11,
+      11
+     ],
+     "partner": "3-2",
+     "retrogradeOf": "3-2",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-1",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 108,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-3",
+     "name": "m2-M3-M3",
+     "intervals": [
+      1,
+      4,
+      4
+     ],
+     "partner": "3-3I",
+     "retrogradeOf": "3-3I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-2",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 36,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-3I",
+     "name": "m6-m6-M7",
+     "intervals": [
+      8,
+      8,
+      11
+     ],
+     "partner": "3-3",
+     "retrogradeOf": "3-3",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-2",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 108,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-4",
+     "name": "m2-M3-m7",
+     "intervals": [
+      1,
+      4,
+      10
+     ],
+     "partner": "3-4I",
+     "retrogradeOf": "3-6I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-3",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-4I",
+     "name": "M2-M7-m6",
+     "intervals": [
+      2,
+      11,
+      8
+     ],
+     "partner": "3-4",
+     "retrogradeOf": "3-6",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-3",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-5",
+     "name": "m2-P5-P5",
+     "intervals": [
+      1,
+      7,
+      7
+     ],
+     "partner": "3-5I",
+     "retrogradeOf": "3-5I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-4",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-5I",
+     "name": "P4-P4-M7",
+     "intervals": [
+      5,
+      5,
+      11
+     ],
+     "partner": "3-5",
+     "retrogradeOf": "3-5",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-4",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-6",
+     "name": "m2-m7-M3",
+     "intervals": [
+      1,
+      10,
+      4
+     ],
+     "partner": "3-6I",
+     "retrogradeOf": "3-4I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-3",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-6I",
+     "name": "M2-m6-M7",
+     "intervals": [
+      2,
+      8,
+      11
+     ],
+     "partner": "3-6",
+     "retrogradeOf": "3-4",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-3",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-7",
+     "name": "m2-m7-m7",
+     "intervals": [
+      1,
+      10,
+      10
+     ],
+     "partner": "3-7I",
+     "retrogradeOf": "3-7I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-5",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-7I",
+     "name": "M2-M2-M7",
+     "intervals": [
+      2,
+      2,
+      11
+     ],
+     "partner": "3-7",
+     "retrogradeOf": "3-7",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-5",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-8",
+     "name": "M2-M2-P4",
+     "intervals": [
+      2,
+      2,
+      5
+     ],
+     "partner": "3-8I",
+     "retrogradeOf": "3-8I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-6",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 36,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-8I",
+     "name": "P5-m7-m7",
+     "intervals": [
+      7,
+      10,
+      10
+     ],
+     "partner": "3-8",
+     "retrogradeOf": "3-8",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-6",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 108,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-9",
+     "name": "M2-P4-m6",
+     "intervals": [
+      2,
+      5,
+      8
+     ],
+     "partner": "3-9I",
+     "retrogradeOf": "3-10I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-7",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-9I",
+     "name": "M3-m7-P5",
+     "intervals": [
+      4,
+      10,
+      7
+     ],
+     "partner": "3-9",
+     "retrogradeOf": "3-10",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-7",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-10",
+     "name": "M2-m6-P4",
+     "intervals": [
+      2,
+      8,
+      5
+     ],
+     "partner": "3-10I",
+     "retrogradeOf": "3-9I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-7",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-10I",
+     "name": "M3-P5-m7",
+     "intervals": [
+      4,
+      7,
+      10
+     ],
+     "partner": "3-10",
+     "retrogradeOf": "3-9",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-7",
+     "rowForms": 12,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-11",
+     "name": "M3-M3-P5",
+     "intervals": [
+      4,
+      4,
+      7
+     ],
+     "partner": "3-11I",
+     "retrogradeOf": "3-11I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-8",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-11I",
+     "name": "P4-m6-m6",
+     "intervals": [
+      5,
+      8,
+      8
+     ],
+     "partner": "3-11",
+     "retrogradeOf": "3-11",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "3-8",
+     "rowForms": 6,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-12",
+     "name": "P4-P4-P4",
+     "intervals": [
+      5,
+      5,
+      5
+     ],
+     "partner": "3-12I",
+     "retrogradeOf": "3-12I",
+     "degenerate": true,
+     "reducesTo": "P4",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "3-12I",
+     "name": "P5-P5-P5",
+     "intervals": [
+      7,
+      7,
+      7
+     ],
+     "partner": "3-12",
+     "retrogradeOf": "3-12",
+     "degenerate": true,
+     "reducesTo": "P5",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    }
+   ]
+  },
+  "4": {
+   "ordinals": 43,
+   "entries": 86,
+   "genuine": 78,
+   "berlinerClasses": 28,
+   "cycles": [
+    {
+     "id": "4-1",
+     "name": "m2-m2-m2-m2",
+     "intervals": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "partner": "4-1I",
+     "retrogradeOf": "4-1I",
+     "degenerate": true,
+     "reducesTo": "m2",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 12,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-1I",
+     "name": "M7-M7-M7-M7",
+     "intervals": [
+      11,
+      11,
+      11,
+      11
+     ],
+     "partner": "4-1",
+     "retrogradeOf": "4-1",
+     "degenerate": true,
+     "reducesTo": "M7",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 132,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-2",
+     "name": "m2-m2-m2-P4",
+     "intervals": [
+      1,
+      1,
+      1,
+      5
+     ],
+     "partner": "4-2I",
+     "retrogradeOf": "4-2I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-1",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 24,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-2I",
+     "name": "P5-M7-M7-M7",
+     "intervals": [
+      7,
+      11,
+      11,
+      11
+     ],
+     "partner": "4-2",
+     "retrogradeOf": "4-2",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-1",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 120,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-3",
+     "name": "m2-m2-P4-M6",
+     "intervals": [
+      1,
+      1,
+      5,
+      9
+     ],
+     "partner": "4-3I",
+     "retrogradeOf": "4-4I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-2",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-3I",
+     "name": "m3-M7-M7-P5",
+     "intervals": [
+      3,
+      11,
+      11,
+      7
+     ],
+     "partner": "4-3",
+     "retrogradeOf": "4-4",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-2",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-4",
+     "name": "m2-m2-M6-P4",
+     "intervals": [
+      1,
+      1,
+      9,
+      5
+     ],
+     "partner": "4-4I",
+     "retrogradeOf": "4-3I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-2",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-4I",
+     "name": "m3-P5-M7-M7",
+     "intervals": [
+      3,
+      7,
+      11,
+      11
+     ],
+     "partner": "4-4",
+     "retrogradeOf": "4-3",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-2",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-5",
+     "name": "m2-m2-M6-M6",
+     "intervals": [
+      1,
+      1,
+      9,
+      9
+     ],
+     "partner": "4-5I",
+     "retrogradeOf": "4-5I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-3",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-5I",
+     "name": "m3-m3-M7-M7",
+     "intervals": [
+      3,
+      3,
+      11,
+      11
+     ],
+     "partner": "4-5",
+     "retrogradeOf": "4-5",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-3",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-6",
+     "name": "m2-M2-m3-M2",
+     "intervals": [
+      1,
+      2,
+      3,
+      2
+     ],
+     "partner": "4-6I",
+     "retrogradeOf": "4-6I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-4",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 24,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-6I",
+     "name": "M6-m7-M7-m7",
+     "intervals": [
+      9,
+      10,
+      11,
+      10
+     ],
+     "partner": "4-6",
+     "retrogradeOf": "4-6",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-4",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 120,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-7",
+     "name": "m2-M2-m3-m7",
+     "intervals": [
+      1,
+      2,
+      3,
+      10
+     ],
+     "partner": "4-7I",
+     "retrogradeOf": "4-24I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-5",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-7I",
+     "name": "M2-M7-m7-M6",
+     "intervals": [
+      2,
+      11,
+      10,
+      9
+     ],
+     "partner": "4-7",
+     "retrogradeOf": "4-24",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-5",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-8",
+     "name": "m2-M2-P5-A4",
+     "intervals": [
+      1,
+      2,
+      7,
+      6
+     ],
+     "partner": "4-8I",
+     "retrogradeOf": "4-18I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-6",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-8I",
+     "name": "P4-A4-M7-m7",
+     "intervals": [
+      5,
+      6,
+      11,
+      10
+     ],
+     "partner": "4-8",
+     "retrogradeOf": "4-18",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-6",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-9",
+     "name": "m2-M2-P5-m7",
+     "intervals": [
+      1,
+      2,
+      7,
+      10
+     ],
+     "partner": "4-9I",
+     "retrogradeOf": "4-26I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-7",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-9I",
+     "name": "M2-M7-m7-P4",
+     "intervals": [
+      2,
+      11,
+      10,
+      5
+     ],
+     "partner": "4-9",
+     "retrogradeOf": "4-26",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-7",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-10",
+     "name": "m2-M2-M7-M2",
+     "intervals": [
+      1,
+      2,
+      11,
+      2
+     ],
+     "partner": "4-10I",
+     "retrogradeOf": "4-10I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-8",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-10I",
+     "name": "m2-m7-M7-m7",
+     "intervals": [
+      1,
+      10,
+      11,
+      10
+     ],
+     "partner": "4-10",
+     "retrogradeOf": "4-10",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-8",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-11",
+     "name": "m2-M2-M7-A4",
+     "intervals": [
+      1,
+      2,
+      11,
+      6
+     ],
+     "partner": "4-11I",
+     "retrogradeOf": "4-20I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-9",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-11I",
+     "name": "m2-A4-M7-m7",
+     "intervals": [
+      1,
+      6,
+      11,
+      10
+     ],
+     "partner": "4-11",
+     "retrogradeOf": "4-20",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-9",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-12",
+     "name": "m2-P4-m2-M6",
+     "intervals": [
+      1,
+      5,
+      1,
+      9
+     ],
+     "partner": "4-12I",
+     "retrogradeOf": "4-12I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-10",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-12I",
+     "name": "m3-M7-P5-M7",
+     "intervals": [
+      3,
+      11,
+      7,
+      11
+     ],
+     "partner": "4-12",
+     "retrogradeOf": "4-12",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-10",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-13",
+     "name": "m2-P4-P4-P4",
+     "intervals": [
+      1,
+      5,
+      5,
+      5
+     ],
+     "partner": "4-13I",
+     "retrogradeOf": "4-13I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-11",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-13I",
+     "name": "P5-P5-P5-M7",
+     "intervals": [
+      7,
+      7,
+      7,
+      11
+     ],
+     "partner": "4-13",
+     "retrogradeOf": "4-13",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-11",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-14",
+     "name": "m2-P4-P4-M6",
+     "intervals": [
+      1,
+      5,
+      5,
+      9
+     ],
+     "partner": "4-14I",
+     "retrogradeOf": "4-22I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-12",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-14I",
+     "name": "m3-M7-P5-P5",
+     "intervals": [
+      3,
+      11,
+      7,
+      7
+     ],
+     "partner": "4-14",
+     "retrogradeOf": "4-22",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-12",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-15",
+     "name": "m2-P4-M6-P4",
+     "intervals": [
+      1,
+      5,
+      9,
+      5
+     ],
+     "partner": "4-15I",
+     "retrogradeOf": "4-15I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-13",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-15I",
+     "name": "m3-P5-M7-P5",
+     "intervals": [
+      3,
+      7,
+      11,
+      7
+     ],
+     "partner": "4-15",
+     "retrogradeOf": "4-15",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-13",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-16",
+     "name": "m2-A4-m3-A4",
+     "intervals": [
+      1,
+      6,
+      3,
+      6
+     ],
+     "partner": "4-16I",
+     "retrogradeOf": "4-16I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-14",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-16I",
+     "name": "A4-M6-A4-M7",
+     "intervals": [
+      6,
+      9,
+      6,
+      11
+     ],
+     "partner": "4-16",
+     "retrogradeOf": "4-16",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-14",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-17",
+     "name": "m2-A4-m3-m7",
+     "intervals": [
+      1,
+      6,
+      3,
+      10
+     ],
+     "partner": "4-17I",
+     "retrogradeOf": "4-25I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-15",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-17I",
+     "name": "M2-M7-A4-M6",
+     "intervals": [
+      2,
+      11,
+      6,
+      9
+     ],
+     "partner": "4-17",
+     "retrogradeOf": "4-25",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-15",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-18",
+     "name": "m2-A4-P5-M2",
+     "intervals": [
+      1,
+      6,
+      7,
+      2
+     ],
+     "partner": "4-18I",
+     "retrogradeOf": "4-8I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-6",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-18I",
+     "name": "P4-m7-M7-A4",
+     "intervals": [
+      5,
+      10,
+      11,
+      6
+     ],
+     "partner": "4-18",
+     "retrogradeOf": "4-8",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-6",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-19",
+     "name": "m2-A4-P5-A4",
+     "intervals": [
+      1,
+      6,
+      7,
+      6
+     ],
+     "partner": "4-19I",
+     "retrogradeOf": "4-19I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-16",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-19I",
+     "name": "P4-A4-M7-A4",
+     "intervals": [
+      5,
+      6,
+      11,
+      6
+     ],
+     "partner": "4-19",
+     "retrogradeOf": "4-19",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-16",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-20",
+     "name": "m2-A4-M7-M2",
+     "intervals": [
+      1,
+      6,
+      11,
+      2
+     ],
+     "partner": "4-20I",
+     "retrogradeOf": "4-11I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-9",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-20I",
+     "name": "m2-m7-M7-A4",
+     "intervals": [
+      1,
+      10,
+      11,
+      6
+     ],
+     "partner": "4-20",
+     "retrogradeOf": "4-11",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-9",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-21",
+     "name": "m2-M6-m2-M6",
+     "intervals": [
+      1,
+      9,
+      1,
+      9
+     ],
+     "partner": "4-21I",
+     "retrogradeOf": "4-21I",
+     "degenerate": true,
+     "reducesTo": "m2-M6",
+     "berliner": null,
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-21I",
+     "name": "m3-M7-m3-M7",
+     "intervals": [
+      3,
+      11,
+      3,
+      11
+     ],
+     "partner": "4-21",
+     "retrogradeOf": "4-21",
+     "degenerate": true,
+     "reducesTo": "m3-M7",
+     "berliner": null,
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-22",
+     "name": "m2-M6-P4-P4",
+     "intervals": [
+      1,
+      9,
+      5,
+      5
+     ],
+     "partner": "4-22I",
+     "retrogradeOf": "4-14I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-12",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-22I",
+     "name": "m3-P5-P5-M7",
+     "intervals": [
+      3,
+      7,
+      7,
+      11
+     ],
+     "partner": "4-22",
+     "retrogradeOf": "4-14",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-12",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-23",
+     "name": "m2-M6-M6-M6",
+     "intervals": [
+      1,
+      9,
+      9,
+      9
+     ],
+     "partner": "4-23I",
+     "retrogradeOf": "4-23I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-17",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-23I",
+     "name": "m3-m3-m3-M7",
+     "intervals": [
+      3,
+      3,
+      3,
+      11
+     ],
+     "partner": "4-23",
+     "retrogradeOf": "4-23",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-17",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-24",
+     "name": "m2-m7-m3-M2",
+     "intervals": [
+      1,
+      10,
+      3,
+      2
+     ],
+     "partner": "4-24I",
+     "retrogradeOf": "4-7I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-5",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-24I",
+     "name": "M2-M6-m7-M7",
+     "intervals": [
+      2,
+      9,
+      10,
+      11
+     ],
+     "partner": "4-24",
+     "retrogradeOf": "4-7",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-5",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-25",
+     "name": "m2-m7-m3-A4",
+     "intervals": [
+      1,
+      10,
+      3,
+      6
+     ],
+     "partner": "4-25I",
+     "retrogradeOf": "4-17I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-15",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-25I",
+     "name": "M2-M6-A4-M7",
+     "intervals": [
+      2,
+      9,
+      6,
+      11
+     ],
+     "partner": "4-25",
+     "retrogradeOf": "4-17",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-15",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-26",
+     "name": "m2-m7-P5-M2",
+     "intervals": [
+      1,
+      10,
+      7,
+      2
+     ],
+     "partner": "4-26I",
+     "retrogradeOf": "4-9I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-7",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-26I",
+     "name": "M2-P4-m7-M7",
+     "intervals": [
+      2,
+      5,
+      10,
+      11
+     ],
+     "partner": "4-26",
+     "retrogradeOf": "4-9",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-7",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-27",
+     "name": "m2-m7-P5-m7",
+     "intervals": [
+      1,
+      10,
+      7,
+      10
+     ],
+     "partner": "4-27I",
+     "retrogradeOf": "4-27I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-18",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-27I",
+     "name": "M2-P4-M2-M7",
+     "intervals": [
+      2,
+      5,
+      2,
+      11
+     ],
+     "partner": "4-27",
+     "retrogradeOf": "4-27",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-18",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-28",
+     "name": "M2-m3-M2-M6",
+     "intervals": [
+      2,
+      3,
+      2,
+      9
+     ],
+     "partner": "4-28I",
+     "retrogradeOf": "4-28I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-19",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-28I",
+     "name": "m3-m7-M6-m7",
+     "intervals": [
+      3,
+      10,
+      9,
+      10
+     ],
+     "partner": "4-28",
+     "retrogradeOf": "4-28",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-19",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-29",
+     "name": "M2-m3-A4-P4",
+     "intervals": [
+      2,
+      3,
+      6,
+      5
+     ],
+     "partner": "4-29I",
+     "retrogradeOf": "4-33I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-20",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-29I",
+     "name": "A4-P5-m7-M6",
+     "intervals": [
+      6,
+      7,
+      10,
+      9
+     ],
+     "partner": "4-29",
+     "retrogradeOf": "4-33",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-20",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-30",
+     "name": "M2-m3-A4-M6",
+     "intervals": [
+      2,
+      3,
+      6,
+      9
+     ],
+     "partner": "4-30I",
+     "retrogradeOf": "4-38I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-21",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-30I",
+     "name": "m3-m7-M6-A4",
+     "intervals": [
+      3,
+      10,
+      9,
+      6
+     ],
+     "partner": "4-30",
+     "retrogradeOf": "4-38",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-21",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-31",
+     "name": "M2-m3-m7-P4",
+     "intervals": [
+      2,
+      3,
+      10,
+      5
+     ],
+     "partner": "4-31I",
+     "retrogradeOf": "4-35I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-22",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-31I",
+     "name": "M2-P5-m7-M6",
+     "intervals": [
+      2,
+      7,
+      10,
+      9
+     ],
+     "partner": "4-31",
+     "retrogradeOf": "4-35",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-22",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-32",
+     "name": "M2-P4-M2-P5",
+     "intervals": [
+      2,
+      5,
+      2,
+      7
+     ],
+     "partner": "4-32I",
+     "retrogradeOf": "4-32I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-23",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-32I",
+     "name": "P4-m7-P5-m7",
+     "intervals": [
+      5,
+      10,
+      7,
+      10
+     ],
+     "partner": "4-32",
+     "retrogradeOf": "4-32",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-23",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-33",
+     "name": "M2-P4-A4-m3",
+     "intervals": [
+      2,
+      5,
+      6,
+      3
+     ],
+     "partner": "4-33I",
+     "retrogradeOf": "4-29I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-20",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-33I",
+     "name": "A4-M6-m7-P5",
+     "intervals": [
+      6,
+      9,
+      10,
+      7
+     ],
+     "partner": "4-33",
+     "retrogradeOf": "4-29",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-20",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-34",
+     "name": "M2-P4-A4-P5",
+     "intervals": [
+      2,
+      5,
+      6,
+      7
+     ],
+     "partner": "4-34I",
+     "retrogradeOf": "4-37I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-24",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-34I",
+     "name": "P4-m7-P5-A4",
+     "intervals": [
+      5,
+      10,
+      7,
+      6
+     ],
+     "partner": "4-34",
+     "retrogradeOf": "4-37",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-24",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-35",
+     "name": "M2-P4-m7-m3",
+     "intervals": [
+      2,
+      5,
+      10,
+      3
+     ],
+     "partner": "4-35I",
+     "retrogradeOf": "4-31I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-22",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-35I",
+     "name": "M2-M6-m7-P5",
+     "intervals": [
+      2,
+      9,
+      10,
+      7
+     ],
+     "partner": "4-35",
+     "retrogradeOf": "4-31",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-22",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-36",
+     "name": "M2-P5-M2-M6",
+     "intervals": [
+      2,
+      7,
+      2,
+      9
+     ],
+     "partner": "4-36I",
+     "retrogradeOf": "4-36I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-25",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-36I",
+     "name": "m3-m7-P4-m7",
+     "intervals": [
+      3,
+      10,
+      5,
+      10
+     ],
+     "partner": "4-36",
+     "retrogradeOf": "4-36",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-25",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-37",
+     "name": "M2-P5-A4-P4",
+     "intervals": [
+      2,
+      7,
+      6,
+      5
+     ],
+     "partner": "4-37I",
+     "retrogradeOf": "4-34I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-24",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-37I",
+     "name": "P4-A4-P5-m7",
+     "intervals": [
+      5,
+      6,
+      7,
+      10
+     ],
+     "partner": "4-37",
+     "retrogradeOf": "4-34",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-24",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-38",
+     "name": "M2-M6-A4-m3",
+     "intervals": [
+      2,
+      9,
+      6,
+      3
+     ],
+     "partner": "4-38I",
+     "retrogradeOf": "4-30I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-21",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-38I",
+     "name": "m3-A4-M6-m7",
+     "intervals": [
+      3,
+      6,
+      9,
+      10
+     ],
+     "partner": "4-38",
+     "retrogradeOf": "4-30",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-21",
+     "rowForms": 16,
+     "palindromic": false,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-39",
+     "name": "m3-m3-m3-P5",
+     "intervals": [
+      3,
+      3,
+      3,
+      7
+     ],
+     "partner": "4-39I",
+     "retrogradeOf": "4-39I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-26",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 48,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-39I",
+     "name": "P4-M6-M6-M6",
+     "intervals": [
+      5,
+      9,
+      9,
+      9
+     ],
+     "partner": "4-39",
+     "retrogradeOf": "4-39",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-26",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 96,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-40",
+     "name": "m3-m3-P5-P5",
+     "intervals": [
+      3,
+      3,
+      7,
+      7
+     ],
+     "partner": "4-40I",
+     "retrogradeOf": "4-40I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-27",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-40I",
+     "name": "P4-P4-M6-M6",
+     "intervals": [
+      5,
+      5,
+      9,
+      9
+     ],
+     "partner": "4-40",
+     "retrogradeOf": "4-40",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-27",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-41",
+     "name": "m3-A4-P4-A4",
+     "intervals": [
+      3,
+      6,
+      5,
+      6
+     ],
+     "partner": "4-41I",
+     "retrogradeOf": "4-41I",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-28",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-41I",
+     "name": "A4-P5-A4-M6",
+     "intervals": [
+      6,
+      7,
+      6,
+      9
+     ],
+     "partner": "4-41",
+     "retrogradeOf": "4-41",
+     "degenerate": false,
+     "reducesTo": null,
+     "berliner": "4-28",
+     "rowForms": 8,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-42",
+     "name": "m3-P5-m3-P5",
+     "intervals": [
+      3,
+      7,
+      3,
+      7
+     ],
+     "partner": "4-42I",
+     "retrogradeOf": "4-42I",
+     "degenerate": true,
+     "reducesTo": "m3-P5",
+     "berliner": null,
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-42I",
+     "name": "P4-M6-P4-M6",
+     "intervals": [
+      5,
+      9,
+      5,
+      9
+     ],
+     "partner": "4-42",
+     "retrogradeOf": "4-42",
+     "degenerate": true,
+     "reducesTo": "P4-M6",
+     "berliner": null,
+     "rowForms": 4,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-43",
+     "name": "P4-P4-P4-P4",
+     "intervals": [
+      5,
+      5,
+      5,
+      5
+     ],
+     "partner": "4-43I",
+     "retrogradeOf": "4-43I",
+     "degenerate": true,
+     "reducesTo": "P4",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 60,
+     "boundedSpan": 11
+    },
+    {
+     "id": "4-43I",
+     "name": "P5-P5-P5-P5",
+     "intervals": [
+      7,
+      7,
+      7,
+      7
+     ],
+     "partner": "4-43",
+     "retrogradeOf": "4-43",
+     "degenerate": true,
+     "reducesTo": "P5",
+     "berliner": null,
+     "rowForms": 2,
+     "palindromic": true,
+     "literalSpan": 84,
+     "boundedSpan": 11
+    }
+   ]
+  }
+ }
+}
