@@ -99,7 +99,7 @@ colouristic passages in *Movement for Viola and Piano* (2010) through to
 combination cycles deployed leitmotivically, one per character or character
 group.
 
-<https://open.uct.ac.za/handle/11427/27428>
+http://hdl.handle.net/11427/27459
 
 Combination cycles in the broader sense are not new — the octatonic scale is
 one, and Ives, Lutoslawski and Ades all used alternating-interval patterns,
