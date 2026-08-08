@@ -1,7 +1,9 @@
 import * as CC from './cycles.js';
 import { writeFileSync } from 'fs';
 
-const out = { generated: new Date().toISOString().slice(0, 10), families: {} };
+// No timestamp: the output must be deterministic so CI can detect a stale
+// catalogue by diffing. Git history already records when it was generated.
+const out = { families: {} };
 for (const k of [2, 3, 4]) {
   const cat = CC.buildCatalogue(k);
   out.families[k] = {
