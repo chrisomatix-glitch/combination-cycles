@@ -31,6 +31,7 @@ const R_LOCKED = 86;
 const R_MOVABLE = 124;
 const DOT_R = 17;
 const HIT_R = 25;
+const DEGREES_PER_STEP = 30 * K; // physical spacing between ring slots on screen
 const ROTATE_MS = 280;
 const SETTLE_MS = 180;
 const FLIP_MS = 320;
@@ -115,10 +116,14 @@ export function mountCircle(root, { onRotate }) {
   }
 
   function render(state, meta = {}) {
-    if (meta.type === 'rotate' && meta.steps) {
+    if (meta.type === 'rotate' && meta.degrees) {
+      // meta.degrees comes from state.js's visualDegrees() — the actual
+      // on-screen displacement, not steps * 60. The two dial-sum families
+      // mirror each other, so the same engine step spins opposite ways in
+      // each; only the engine (via that function) knows which is which.
       animateTransform(
         movableGroup,
-        `rotate(${meta.steps * 60}deg)`,
+        `rotate(${meta.degrees}deg)`,
         ROTATE_MS,
         () => draw(state.intervals, state.transposition),
       );
@@ -144,15 +149,19 @@ export function mountCircle(root, { onRotate }) {
 
   let dragStartAngle = null;
 
-  function settleRotate(steps) {
-    const targetDeg = steps * 60;
+  // `visualSlots` here is always screen-space: positive means the ring was
+  // dragged clockwise, full stop. It is `onRotate`'s job (rotateVisual in
+  // state.js) to work out which engine step sign that corresponds to in the
+  // current dial-sum family - circle.js never assumes a fixed sign itself.
+  function settleRotate(visualSlots) {
+    const targetDeg = visualSlots * DEGREES_PER_STEP;
     const already = movableGroup.style.transform === `rotate(${targetDeg}deg)`
       || (targetDeg === 0 && (movableGroup.style.transform === '' || movableGroup.style.transform === 'none'));
     const finish = () => {
       movableGroup.style.transition = 'none';
       movableGroup.style.transform = 'none';
       animating = false;
-      if (steps !== 0) onRotate(steps);
+      if (visualSlots !== 0) onRotate(visualSlots);
     };
     if (already) { finish(); return; }
     animating = true;
@@ -183,7 +192,7 @@ export function mountCircle(root, { onRotate }) {
     const delta = angleAt(e.clientX, e.clientY) - dragStartAngle;
     dragStartAngle = null;
     movableGroup.classList.remove('is-dragging');
-    settleRotate(Math.round(delta / 60));
+    settleRotate(Math.round(delta / DEGREES_PER_STEP));
   }
   movableGroup.addEventListener('pointerup', endDrag);
   movableGroup.addEventListener('pointercancel', endDrag);

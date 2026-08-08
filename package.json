@@ -9,6 +9,7 @@
   "homepage": "https://chrisjeffery.co.za",
   "scripts": {
     "test": "node src/cycles.test.js",
+    "test:ui": "node app/state.test.js",
     "catalogue": "cd src && node gen-catalogue.js"
   }
 }

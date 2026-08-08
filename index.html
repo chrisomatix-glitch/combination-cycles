@@ -51,14 +51,14 @@
 <script type="module">
   import * as CC from './src/cycles.js';
   import {
-    initState, subscribe, rotateMovable, reverse, setDialValue, reloadFromLocation,
+    initState, subscribe, rotateVisual, reverse, setDialValue, reloadFromLocation,
   } from './app/state.js';
   import { mountCircle } from './app/circle.js';
   import { mountDials } from './app/dials.js';
 
   const CATALOGUE = CC.buildCatalogue(2);
 
-  const circle = mountCircle(document.getElementById('circle-holder'), { onRotate: rotateMovable });
+  const circle = mountCircle(document.getElementById('circle-holder'), { onRotate: rotateVisual });
   const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
 
   const readout = {
@@ -88,13 +88,16 @@
   subscribe(renderAll);
   renderAll(initState(), { type: 'init' });
 
-  document.getElementById('rotate-left').addEventListener('click', () => rotateMovable(-1));
-  document.getElementById('rotate-right').addEventListener('click', () => rotateMovable(1));
+  // rotateVisual's argument is screen-space (positive = clockwise), so the
+  // right arrow is always clockwise regardless of which dial-sum family the
+  // current cycle is in — see state.js's visualDegrees().
+  document.getElementById('rotate-left').addEventListener('click', () => rotateVisual(-1));
+  document.getElementById('rotate-right').addEventListener('click', () => rotateVisual(1));
   document.getElementById('reverse-direction').addEventListener('click', () => reverse());
 
   document.getElementById('circle-holder').addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); rotateMovable(-1); }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); rotateMovable(1); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); rotateVisual(-1); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); rotateVisual(1); }
   });
 
   window.addEventListener('popstate', () => renderAll(reloadFromLocation(), { type: 'init' }));
