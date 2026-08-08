@@ -7,7 +7,7 @@ authors:
     given-names: Christopher
     # orcid: "https://orcid.org/0000-0000-0000-0000"   # fill in
     # affiliation: ""                                   # fill in
-repository-code: "https://github.com/USERNAME/combination-cycles"
+repository-code: "https://github.com/chrisomatix-glitch/combination-cycles"
 url: "https://chrisjeffery.co.za"
 abstract: >-
   An engine for enumerating, cataloguing and realising symmetrical twelve-note
