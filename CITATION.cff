@@ -5,7 +5,7 @@ type: software
 authors:
   - family-names: Jeffery
     given-names: Christopher
-    orcid: "https://orcid.org/https://orcid.org/0000-0002-1587-6254"
+    orcid: "https://orcid.org/0000-0002-1587-6254"
     affiliation: "University of South Africa"
 repository-code: "https://github.com/chrisomatix-glitch/combination-cycles"
 url: "https://chrisjeffery.co.za"
