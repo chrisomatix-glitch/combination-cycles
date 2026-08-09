@@ -79,12 +79,13 @@ export function setMode(k) {
  * rotateGroup's `steps` argument is a step count in *interval-sequence*
  * space, not screen space: the circle draws pitchClasses(iv, 0)[slot] at a
  * fixed angular slot, so the actual on-screen displacement depends on where
- * the note that ends up at slot `m` came from. Because the circle's layout
- * mirrors between dial-sum families (SPEC.md's reverseDirection mirrors the
- * whole figure — see circle.js), the same `steps` sign can spin a ring
- * opposite ways depending on the current cycle. This is the ground truth;
- * nothing upstream should assume a fixed degrees-per-step sign. It works
- * unchanged for any k and any movable group m — only the caller varies.
+ * the note that ends up at slot `m` came from. The cycle's dial-sum can be
+ * one of two complementary families (moving between them is exactly what
+ * CC.reverseDirection or CC.invert do), and the same `steps` sign can spin a
+ * ring opposite ways depending on which family the current cycle is in. This
+ * is the ground truth; nothing upstream should assume a fixed degrees-per-step
+ * sign. It works unchanged for any k and any movable group m — only the
+ * caller varies.
  */
 export function visualDegrees(intervals, m, steps) {
   const next = CC.rotateGroup(intervals, m, steps);
@@ -107,22 +108,35 @@ export function engineStepsFor(intervals, m, visualSteps) {
  * Rotate movable ring `m` by `visualSteps` positions of 12/k, where positive
  * is always clockwise on screen regardless of which dial-sum family the
  * current cycle is in.
+ *
+ * `instant` marks a rotation that arrives already visually settled — a
+ * released drag, which circle.js has already animated from wherever the
+ * pointer let go to the nearest snap position — so the renderer should just
+ * redraw rather than replay the full step animation on top of it (SPEC.md's
+ * Phase 3 brief). Button and keyboard rotation leave it false, where the full
+ * animation is correct because the ring starts at rest.
  */
-export function rotateVisual(m, visualSteps) {
+export function rotateVisual(m, visualSteps, { instant = false } = {}) {
   const prev = state.intervals;
   const steps = engineStepsFor(prev, m, visualSteps);
   const next = CC.rotateGroup(prev, m, steps);
   if (!next) return; // illegal rotations should not occur, but the engine is the judge
   state = { ...state, intervals: next };
   emit({
-    type: 'rotate', m, steps, from: prev, degrees: visualDegrees(prev, m, steps),
+    type: 'rotate', m, steps, from: prev, degrees: visualDegrees(prev, m, steps), instant,
   });
 }
 
-/** Reverse the direction the locked group is traversed. */
-export function reverse() {
-  state = { ...state, intervals: CC.reverseDirection(state.intervals) };
-  emit({ type: 'reverse' });
+/**
+ * Invert the cycle. `invert()` lands exactly on the catalogue partner every
+ * time — k-n becomes k-nI and back — and is its own inverse, so pressing it
+ * twice returns the exact starting state. Rotation plus pairwise swaps plus
+ * invert still reaches every ordered form, exactly as rotation plus swaps
+ * plus reverseDirection did (SPEC.md's Phase 3 brief).
+ */
+export function invert() {
+  state = { ...state, intervals: CC.invert(state.intervals) };
+  emit({ type: 'invert' });
 }
 
 /** Set dial `index` to `value`, compensating into a neighbouring dial. */

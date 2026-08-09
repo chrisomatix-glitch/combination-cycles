@@ -6,6 +6,14 @@
 <title>Combination Cycles — the circle-of-fifths tool</title>
 <meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles, with two, three or four alternating intervals.">
 <link rel="stylesheet" href="app/styles.css">
+<!--
+  The single external script the build constraints permit (SPEC.md §10):
+  Tone.js from a CDN, no build step, no npm dependency at runtime. Loaded as
+  a plain classic script so it blocks parsing and finishes (or fails) before
+  the module script below ever runs — app/audio.js checks for window.Tone
+  rather than assuming it loaded, and degrades to silence if it didn't.
+-->
+<script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
 </head>
 <body>
 <main class="app">
@@ -29,7 +37,7 @@
       <div class="ring-controls" id="ring-controls" aria-label="Rotate rings"></div>
 
       <div class="circle-controls">
-        <button type="button" class="btn" id="reverse-direction">Reverse direction</button>
+        <button type="button" class="btn" id="invert-direction">Invert</button>
       </div>
 
       <div class="swap-controls" id="swap-controls" aria-label="Swap rings"></div>
@@ -39,10 +47,25 @@
       <p class="hint">
         Drag a ring to rotate it. Tap one ring, then another, to swap them —
         that's how every combination becomes reachable, not just the ones
-        rotation alone can reach. Reversing direction reads the same
-        connections the other way round — the same shape, mirrored — and
-        lands on a different catalogue entry.
+        rotation alone can reach. Inverting reflects the cycle onto its
+        catalogue partner — k-n becomes k-nI, and back — changing both the
+        notes and their arrangement. Click a note to hear it.
       </p>
+
+      <section class="audio-controls" id="audio-controls" aria-label="Playback">
+        <div class="register-toggle" role="group" aria-label="Register" id="register-toggle">
+          <button type="button" class="toggle-btn" data-mode="bounded" aria-pressed="true">Bounded</button>
+          <button type="button" class="toggle-btn" data-mode="literal" aria-pressed="false">Literal</button>
+        </div>
+
+        <div class="tempo-control">
+          <label for="tempo">Tempo</label>
+          <input type="range" id="tempo" min="40" max="240" step="5" value="120">
+          <output id="tempo-value" for="tempo">120 BPM</output>
+        </div>
+
+        <button type="button" class="btn" id="play-through">Play</button>
+      </section>
     </section>
   </div>
 
@@ -57,13 +80,16 @@
 <script type="module">
   import * as CC from './src/cycles.js';
   import {
-    initState, subscribe, MODES, setMode, rotateVisual, reverse, setDialValue,
-    swapRings, reloadFromLocation,
+    initState, getState, subscribe, MODES, setMode, rotateVisual, invert,
+    setDialValue, swapRings, reloadFromLocation,
   } from './app/state.js';
   import { mountCircle } from './app/circle.js';
   import { mountDials } from './app/dials.js';
+  import * as Audio from './app/audio.js';
 
   let catalogue = null;
+  let registerMode = 'bounded'; // view-only: SPEC.md §4 says register carries no information
+  let tempo = 120; // BPM-ish: notes per minute
 
   const statusEl = document.getElementById('swap-status');
 
@@ -74,6 +100,14 @@
       statusEl.textContent = m === null
         ? ''
         : `Ring ${m} selected — tap or click another ring to swap with it, or tap it again to cancel.`;
+    },
+    onNotePlay: (slot) => {
+      const state = getState();
+      const notes = CC.placeRegister(state.intervals, {
+        mode: registerMode, transposition: state.transposition, closeCycle: false,
+      });
+      Audio.playMidi(notes[slot]);
+      circle.highlightSlot(slot);
     },
   });
   const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
@@ -169,6 +203,11 @@
   }
 
   function renderAll(state, meta) {
+    // The cycle just changed underneath any in-progress play-through, so it
+    // would be playing a now-stale sequence — cancel it rather than let it
+    // finish out of step with what's on screen.
+    Audio.stopSequence();
+    updatePlayButton();
     circle.render(state, meta);
     dials.render(state, meta);
     renderReadout(state);
@@ -189,6 +228,58 @@
     });
   }
 
+  // --- Audio controls: register toggle and play-through --------------------
+  // Clicking notes is wired via onNotePlay in the mountCircle() call above;
+  // this is the register toggle and the play-through transport.
+  const playBtn = document.getElementById('play-through');
+  const tempoInput = document.getElementById('tempo');
+  const tempoValue = document.getElementById('tempo-value');
+  const registerToggle = document.getElementById('register-toggle');
+
+  function updatePlayButton() {
+    playBtn.textContent = Audio.isPlaying() ? 'Stop' : 'Play';
+  }
+
+  // placeRegister's closeCycle note (index 12) returns to the starting pitch
+  // class, so it belongs to slot 0 for highlighting purposes.
+  const slotForIndex = (i) => (i < 12 ? i : 0);
+
+  playBtn.addEventListener('click', () => {
+    if (Audio.isPlaying()) {
+      Audio.stopSequence();
+      updatePlayButton();
+      return;
+    }
+    const state = getState();
+    const notes = CC.placeRegister(state.intervals, {
+      mode: registerMode, transposition: state.transposition, closeCycle: true,
+    });
+    // playSequence() marks itself playing synchronously (before its own
+    // first await), so isPlaying() is already true once this call returns —
+    // update the button after starting it, not before.
+    Audio.playSequence(notes, 60000 / tempo, {
+      onNote: (i) => circle.highlightSlot(slotForIndex(i)),
+      onDone: updatePlayButton,
+    });
+    updatePlayButton();
+  });
+
+  tempoInput.addEventListener('input', () => {
+    tempo = Number(tempoInput.value);
+    tempoValue.textContent = `${tempo} BPM`;
+  });
+
+  registerToggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('.toggle-btn');
+    if (!btn || btn.dataset.mode === registerMode) return;
+    Audio.stopSequence();
+    updatePlayButton();
+    registerMode = btn.dataset.mode;
+    registerToggle.querySelectorAll('.toggle-btn').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b === btn));
+    });
+  });
+
   const initial = initState();
   applyMode(initial.intervals.length);
   renderAll(initial, { type: 'init' });
@@ -198,7 +289,7 @@
     renderAll(state, meta);
   });
 
-  document.getElementById('reverse-direction').addEventListener('click', () => reverse());
+  document.getElementById('invert-direction').addEventListener('click', () => invert());
 
   window.addEventListener('popstate', () => {
     const state = reloadFromLocation();

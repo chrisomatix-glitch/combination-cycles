@@ -1,11 +1,19 @@
 /**
- * Reachability test (SPEC.md's Phase 2 acceptance criterion 1 and 5): proves
- * against the engine, not by hand, that rotation + reversal + pairwise ring
- * swaps from the circle-of-fifths position reach every ordered form — 12 at
- * k = 2, 64 at k = 3, 324 at k = 4 — and that permalinks round-trip at every
- * k. Pairwise swaps are sufficient rather than needing a full permutation
- * picker because transpositions generate the whole symmetric group; this
- * test is the proof, not just an assertion of it.
+ * Reachability test (SPEC.md's Phase 2 acceptance criterion 1, carried
+ * forward by Phase 3's criterion 2): proves against the engine, not by hand,
+ * that rotation + invert + pairwise ring swaps from the circle-of-fifths
+ * position reach every ordered form — 12 at k = 2, 64 at k = 3, 324 at k = 4
+ * — and that permalinks round-trip at every k. Pairwise swaps are sufficient
+ * rather than needing a full permutation picker because transpositions
+ * generate the whole symmetric group; this test is the proof, not just an
+ * assertion of it.
+ *
+ * Phase 3 replaced the interface's "reverse direction" control (reverseDirection,
+ * the serial retrograde) with "invert" (invert, the serial inversion) — a
+ * better fit, since it lands exactly on the cycle's catalogue partner. That
+ * swap is why this file uses CC.invert() below rather than
+ * CC.reverseDirection(): the reachability claim has to be proved for the
+ * control the interface actually offers.
  *
  * Run: node app/reachability.test.js
  */
@@ -43,11 +51,11 @@ const cartesian = (arrays) => arrays.reduce(
 
 /**
  * Every ordered form reachable from the circle-of-fifths position via
- * reversal, group reordering (through reorderGroups, standing in for
- * composed pairwise swaps — SPEC.md §6 says rotation + reversal + reordering
- * reaches everything, and reorderGroups' perm argument can express any
+ * inversion, group reordering (through reorderGroups, standing in for
+ * composed pairwise swaps — reorderGroups' perm argument can express any
  * permutation a sequence of pairwise swaps can reach) and independent
- * rotation of every movable ring.
+ * rotation of every movable ring. This is rotation + swaps + invert, the
+ * three controls the interface actually offers as of Phase 3.
  */
 function reachableForms(k) {
   const base = Array(k).fill(7);
@@ -57,8 +65,8 @@ function reachableForms(k) {
   const combos = cartesian(groups.map(() => range(positions)));
   const out = new Set();
 
-  for (const reversed of [false, true]) {
-    const start = reversed ? CC.reverseDirection(base) : base;
+  for (const inverted of [false, true]) {
+    const start = inverted ? CC.invert(base) : base;
     for (const perm of perms) {
       const isIdentity = perm.every((v, i) => v === groups[i]);
       const reordered = isIdentity ? start : CC.reorderGroups(start, perm);

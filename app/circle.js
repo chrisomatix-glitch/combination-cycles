@@ -24,6 +24,12 @@
  * movable ring to arm it, tap a different one to swap; tapping the armed
  * ring again cancels. The same arm/swap toggle is reachable from the
  * keyboard (Enter/Space on a focused ring).
+ *
+ * That same tap also plays the note under the pointer (SPEC.md's Phase 3
+ * brief: clicking a note is the primary interaction). Arming/swapping and
+ * playing are independent side effects of the one gesture, not alternatives.
+ * The locked ring has no drag/swap behaviour, so its notes just get a plain
+ * click listener.
  */
 import * as CC from '../src/cycles.js';
 
@@ -35,7 +41,6 @@ const HIT_R = 20;
 const TAP_THRESHOLD_PX = 6;
 const ROTATE_MS = 280;
 const SETTLE_MS = 180;
-const FLIP_MS = 320;
 
 // Ring radii by k, innermost (locked, ring 0) first. Tuned by hand so k = 2
 // matches Phase 1 exactly, and k = 3/4 keep even gaps as more rings have to
@@ -91,7 +96,7 @@ function shapeEl(ring) {
   });
 }
 
-export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
+export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) {
   const svg = svgEl('svg', {
     viewBox: '0 0 300 300',
     class: 'circle-svg',
@@ -101,6 +106,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
   let k = 0;
   let degreesPerStep = 60;
   let ringEls = [];
+  let noteEls = []; // indexed by slot, rebuilt every draw()
   let animating = false;
   let armedRing = null;
 
@@ -125,6 +131,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
 
   function draw(intervals, transposition) {
     for (const g of ringEls) g.textContent = '';
+    noteEls = [];
     const pcs = CC.pitchClasses(intervals, transposition);
     const kk = intervals.length;
     for (let slot = 0; slot < 12; slot += 1) {
@@ -135,6 +142,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
         class: `note note--ring${ring} note--${ring === 0 ? 'locked' : 'movable'}`,
         transform: `translate(${x} ${y})`,
       });
+      note.dataset.slot = String(slot);
       const hit = svgEl('circle', { r: HIT_R, class: 'note__hit' });
       const shape = shapeEl(ring);
       const label = svgEl('text', {
@@ -142,8 +150,25 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
       });
       label.textContent = CC.PITCH_NAMES[pcs[slot]];
       note.append(hit, shape, label);
+      if (ring === 0) {
+        // The locked ring has no drag/swap handling, so a plain click plays
+        // the note. Movable rings play from the tap branch of their own
+        // pointer handling instead (attachRingHandlers), since that's the
+        // one place that already distinguishes a tap from a drag.
+        note.addEventListener('click', () => onNotePlay?.(slot));
+      }
+      noteEls[slot] = note;
       ringEls[ring].appendChild(note);
     }
+  }
+
+  /** Briefly pulse the note at `slot` — used for both click feedback and play-through. */
+  function highlightSlot(slot) {
+    const note = noteEls[slot];
+    if (!note) return;
+    note.classList.remove('note--playing');
+    note.getBoundingClientRect(); // force reflow so a repeated pulse restarts
+    note.classList.add('note--playing');
   }
 
   function animateTransform(target, toTransform, ms, after) {
@@ -167,7 +192,13 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
   }
 
   function render(state, meta = {}) {
-    if (meta.type === 'rotate' && meta.degrees && ringEls[meta.m]) {
+    if (meta.type === 'rotate' && meta.instant && ringEls[meta.m]) {
+      // A released drag already animated this ring from wherever the
+      // pointer let go to its snap position (settleRotate below) — just
+      // swap in the new arrangement, don't replay the step as a second
+      // animation on top of it (SPEC.md's Phase 3 brief).
+      draw(state.intervals, state.transposition);
+    } else if (meta.type === 'rotate' && meta.degrees && ringEls[meta.m]) {
       // meta.degrees comes from state.js's visualDegrees() — the actual
       // on-screen displacement for THIS ring, not steps * (30 * k). See
       // state.js for why the sign can't be assumed fixed.
@@ -175,13 +206,6 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
         ringEls[meta.m],
         `rotate(${meta.degrees}deg)`,
         ROTATE_MS,
-        () => draw(state.intervals, state.transposition),
-      );
-    } else if (meta.type === 'reverse') {
-      animateTransform(
-        svg,
-        'scale(-1, 1)',
-        FLIP_MS,
         () => draw(state.intervals, state.transposition),
       );
     } else {
@@ -210,7 +234,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
       ringEl.style.transition = 'none';
       ringEl.style.transform = 'none';
       animating = false;
-      if (visualSlots !== 0) onRotate?.(m, visualSlots);
+      if (visualSlots !== 0) onRotate?.(m, visualSlots, { instant: true });
     };
     if (already) { finish(); return; }
     animating = true;
@@ -226,11 +250,15 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
 
   function attachRingHandlers(m) {
     const ringEl = ringEls[m];
-    let dragStart = null; // { angle, x, y }
+    let dragStart = null; // { angle, x, y, slot }
 
     ringEl.addEventListener('pointerdown', (e) => {
       if (animating) return;
-      dragStart = { angle: angleAt(e.clientX, e.clientY), x: e.clientX, y: e.clientY };
+      const noteEl = e.target.closest('.note');
+      const slot = noteEl ? Number(noteEl.dataset.slot) : null;
+      dragStart = {
+        angle: angleAt(e.clientX, e.clientY), x: e.clientX, y: e.clientY, slot,
+      };
       ringEl.setPointerCapture(e.pointerId);
       ringEl.style.transition = 'none';
       ringEl.classList.add('is-dragging');
@@ -242,17 +270,22 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
     });
     function endDrag(e) {
       if (!dragStart) return;
-      const { x, y, angle } = dragStart;
+      const {
+        x, y, angle, slot,
+      } = dragStart;
       const dist = Math.hypot(e.clientX - x, e.clientY - y);
       const delta = angleAt(e.clientX, e.clientY) - angle;
       dragStart = null;
       ringEl.classList.remove('is-dragging');
       if (dist < TAP_THRESHOLD_PX) {
         // Barely moved: a tap, not a drag. In Phase 1 this was a silent
-        // no-op; here it arms the ring for swapping instead.
+        // no-op; Phase 2 made it arm the ring for swapping; Phase 3 also
+        // plays the note under the pointer, since a tap on a movable ring's
+        // note never reaches the locked ring's own click listener.
         ringEl.style.transition = 'none';
         ringEl.style.transform = 'none';
         armOrSwap(m);
+        if (slot !== null) onNotePlay?.(slot);
         return;
       }
       settleRotate(m, Math.round(delta / degreesPerStep));
@@ -298,5 +331,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm } = {}) {
     }
   }
 
-  return { render, setMode };
+  return {
+    render, setMode, highlightSlot,
+  };
 }
