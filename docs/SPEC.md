@@ -275,6 +275,11 @@ alongside the identifiers.
 - Vanilla JS + SVG. No framework, no build step, no npm at runtime.
 - Deploys as a folder to `chrisjeffery.co.za/cycles/`. Nothing else on the
   site is touched.
+- The app is loaded as ES modules (`<script type="module">`), which Chrome
+  refuses to load over `file://` — opening `index.html` by double-clicking it
+  shows a blank page. It needs an HTTP origin. Locally, `npx serve` (or any
+  static file server) from the repo root is the way to run it; the deployed
+  site already serves it over HTTP, so this only affects local development.
 - Two presentations from one artifact: a bare version for `<iframe>` embedding
   and screen recording, and a wrapper carrying the site's header and nav.
 - Small bundle, works offline, thumb-sized touch targets. Distance-learning

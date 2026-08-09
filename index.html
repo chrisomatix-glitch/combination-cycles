@@ -3,16 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Combination Cycles — the two-interval circle</title>
-<meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles.">
+<title>Combination Cycles — the circle-of-fifths tool</title>
+<meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles, with two, three or four alternating intervals.">
 <link rel="stylesheet" href="app/styles.css">
 </head>
 <body>
 <main class="app">
   <header class="app__header">
     <h1>Combination Cycles</h1>
-    <p class="app__subtitle">Two-interval mode</p>
+    <p class="app__subtitle" id="mode-subtitle"></p>
   </header>
+
+  <div class="mode-select" role="group" aria-label="Number of intervals" id="mode-select"></div>
 
   <div class="layout">
     <section class="dials" id="dials" aria-label="Interval dials"></section>
@@ -21,21 +23,25 @@
       <div
         class="circle-holder"
         id="circle-holder"
-        tabindex="0"
-        role="group"
-        aria-label="Circle of fifths. The outer diamond ring is movable. Drag it, use the rotate buttons, or press the left and right arrow keys while this is focused."
+        aria-label="Circle of fifths. Each movable ring can be dragged, rotated with arrow keys when focused, or tapped to select it for swapping with another ring."
       ></div>
 
+      <div class="ring-controls" id="ring-controls" aria-label="Rotate rings"></div>
+
       <div class="circle-controls">
-        <button type="button" class="btn btn--icon" id="rotate-left" aria-label="Rotate movable ring left">◂</button>
         <button type="button" class="btn" id="reverse-direction">Reverse direction</button>
-        <button type="button" class="btn btn--icon" id="rotate-right" aria-label="Rotate movable ring right">▸</button>
       </div>
 
+      <div class="swap-controls" id="swap-controls" aria-label="Swap rings"></div>
+
+      <p class="hint hint--status" id="swap-status" aria-live="polite"></p>
+
       <p class="hint">
-        Reversing direction reads the same twelve connections the other way
-        round — the same shape, mirrored — and lands on a different
-        catalogue entry.
+        Drag a ring to rotate it. Tap one ring, then another, to swap them —
+        that's how every combination becomes reachable, not just the ones
+        rotation alone can reach. Reversing direction reads the same
+        connections the other way round — the same shape, mirrored — and
+        lands on a different catalogue entry.
       </p>
     </section>
   </div>
@@ -51,16 +57,99 @@
 <script type="module">
   import * as CC from './src/cycles.js';
   import {
-    initState, subscribe, rotateVisual, reverse, setDialValue, reloadFromLocation,
+    initState, subscribe, MODES, setMode, rotateVisual, reverse, setDialValue,
+    swapRings, reloadFromLocation,
   } from './app/state.js';
   import { mountCircle } from './app/circle.js';
   import { mountDials } from './app/dials.js';
 
-  const CATALOGUE = CC.buildCatalogue(2);
+  let catalogue = null;
 
-  const circle = mountCircle(document.getElementById('circle-holder'), { onRotate: rotateVisual });
+  const statusEl = document.getElementById('swap-status');
+
+  const circle = mountCircle(document.getElementById('circle-holder'), {
+    onRotate: rotateVisual,
+    onSwap: swapRings,
+    onArm: (m) => {
+      statusEl.textContent = m === null
+        ? ''
+        : `Ring ${m} selected — tap or click another ring to swap with it, or tap it again to cancel.`;
+    },
+  });
   const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
 
+  // --- Mode selector -------------------------------------------------------
+  const modeSelect = document.getElementById('mode-select');
+  for (const k of MODES) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mode-btn';
+    btn.dataset.k = String(k);
+    btn.textContent = `${k} intervals`;
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', () => setMode(k));
+    modeSelect.appendChild(btn);
+  }
+
+  // --- Per-ring rotate buttons and pairwise swap buttons --------------------
+  const ringControls = document.getElementById('ring-controls');
+  const swapControls = document.getElementById('swap-controls');
+
+  function buildRingControls(k) {
+    ringControls.innerHTML = '';
+    for (let m = 1; m < k; m += 1) {
+      const group = document.createElement('div');
+      group.className = 'ring-control';
+      group.style.setProperty('--ring-color', `var(--color-ring-${m})`);
+
+      const left = document.createElement('button');
+      left.type = 'button';
+      left.className = 'btn btn--icon';
+      left.textContent = '◂';
+      left.setAttribute('aria-label', `Rotate ring ${m} left`);
+      left.addEventListener('click', () => rotateVisual(m, -1));
+
+      const label = document.createElement('span');
+      label.className = 'ring-control__label';
+      label.textContent = `Ring ${m}`;
+
+      const right = document.createElement('button');
+      right.type = 'button';
+      right.className = 'btn btn--icon';
+      right.textContent = '▸';
+      right.setAttribute('aria-label', `Rotate ring ${m} right`);
+      right.addEventListener('click', () => rotateVisual(m, 1));
+
+      group.append(left, label, right);
+      ringControls.appendChild(group);
+    }
+  }
+
+  function buildSwapControls(k) {
+    swapControls.innerHTML = '';
+    for (let a = 1; a < k; a += 1) {
+      for (let b = a + 1; b < k; b += 1) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn--swap';
+
+        const swatchA = document.createElement('span');
+        swatchA.className = 'swatch';
+        swatchA.style.setProperty('--swatch-color', `var(--color-ring-${a})`);
+        const arrow = document.createTextNode('⇄');
+        const swatchB = document.createElement('span');
+        swatchB.className = 'swatch';
+        swatchB.style.setProperty('--swatch-color', `var(--color-ring-${b})`);
+
+        btn.append(swatchA, arrow, swatchB);
+        btn.setAttribute('aria-label', `Swap ring ${a} and ring ${b}`);
+        btn.addEventListener('click', () => swapRings(a, b));
+        swapControls.appendChild(btn);
+      }
+    }
+  }
+
+  // --- Readout ---------------------------------------------------------
   const readout = {
     id: document.querySelector('.readout__id'),
     name: document.querySelector('.readout__name'),
@@ -69,7 +158,7 @@
   };
 
   function renderReadout(state) {
-    const entry = CC.identify(state.intervals, CATALOGUE);
+    const entry = CC.identify(state.intervals, catalogue);
     readout.id.textContent = entry.id;
     readout.name.textContent = entry.name;
     readout.berliner.textContent = entry.berliner
@@ -85,22 +174,37 @@
     renderReadout(state);
   }
 
-  subscribe(renderAll);
-  renderAll(initState(), { type: 'init' });
+  // A mode switch changes how many rings and dials there are, so it rebuilds
+  // structure before the next render() rather than just redrawing.
+  function applyMode(k) {
+    catalogue = CC.buildCatalogue(k);
+    circle.setMode(k);
+    dials.setMode(k);
+    buildRingControls(k);
+    buildSwapControls(k);
+    statusEl.textContent = '';
+    document.getElementById('mode-subtitle').textContent = `${k}-interval mode`;
+    document.querySelectorAll('.mode-btn').forEach((btn) => {
+      btn.setAttribute('aria-pressed', String(Number(btn.dataset.k) === k));
+    });
+  }
 
-  // rotateVisual's argument is screen-space (positive = clockwise), so the
-  // right arrow is always clockwise regardless of which dial-sum family the
-  // current cycle is in — see state.js's visualDegrees().
-  document.getElementById('rotate-left').addEventListener('click', () => rotateVisual(-1));
-  document.getElementById('rotate-right').addEventListener('click', () => rotateVisual(1));
-  document.getElementById('reverse-direction').addEventListener('click', () => reverse());
+  const initial = initState();
+  applyMode(initial.intervals.length);
+  renderAll(initial, { type: 'init' });
 
-  document.getElementById('circle-holder').addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { e.preventDefault(); rotateVisual(-1); }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { e.preventDefault(); rotateVisual(1); }
+  subscribe((state, meta) => {
+    if (meta.type === 'mode') applyMode(meta.k);
+    renderAll(state, meta);
   });
 
-  window.addEventListener('popstate', () => renderAll(reloadFromLocation(), { type: 'init' }));
+  document.getElementById('reverse-direction').addEventListener('click', () => reverse());
+
+  window.addEventListener('popstate', () => {
+    const state = reloadFromLocation();
+    applyMode(state.intervals.length);
+    renderAll(state, { type: 'init' });
+  });
 </script>
 </body>
 </html>

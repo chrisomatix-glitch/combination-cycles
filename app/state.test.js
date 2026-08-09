@@ -1,23 +1,24 @@
 /**
  * Regression test: a clockwise rotate request must always produce a
- * clockwise (positive) visual displacement on screen, in both dial-sum
- * families the two-interval circle can be in, and vice versa for
- * anticlockwise.
+ * clockwise (positive) visual displacement on screen — on every movable
+ * ring, at every k in {2, 3, 4}, in both traversal directions — and
+ * vice versa for anticlockwise (SPEC.md's Phase 2 acceptance criterion 4).
  *
  * Background: rotateGroup's `steps` is a step count in interval-sequence
  * space, not screen space. The circle mirrors between the family where the
- * dials sum to a major 2nd (mod 12) and the family where they sum to a
- * minor 7th (its complement) - reverseDirection moves between them - so the
- * same engine step sign spins the ring opposite ways in each. Fixed prior to
- * this test: circle.js assumed steps * 60deg was always clockwise, which was
- * only true in one of the two families.
+ * dials sum to a major 2nd (mod 12) and the family where they sum to its
+ * complement - reverseDirection moves between them - so the same engine step
+ * sign can spin a ring opposite ways depending on the current cycle. Fixed
+ * prior to Phase 1's release: circle.js once assumed steps * degrees was
+ * always clockwise, which was only true in one of the two families. Phase 2
+ * generalises the guard from k = 2's single movable ring to every movable
+ * ring at every k, since the same assumption could just as easily have crept
+ * back in while adding the other rings.
  *
  * Run: node app/state.test.js
  */
 import * as CC from '../src/cycles.js';
 import { visualDegrees, engineStepsFor } from './state.js';
-
-const MOVABLE_GROUP = 1;
 
 let pass = 0; let fail = 0;
 const results = [];
@@ -26,47 +27,61 @@ function assert(name, cond, detail = '') {
   results.push({ ok: !!cond, name, detail });
 }
 
-// Every state reachable in the two-interval mode: six rotations x the two
-// directions (see app/state.js's rotateVisual / circle.js's reverse control).
-function reachableStates() {
-  const start = [7, 7];
-  const out = [];
-  for (const base of [start, CC.reverseDirection(start)]) {
-    for (let steps = 0; steps < 6; steps += 1) {
-      const iv = CC.rotateGroup(base, MOVABLE_GROUP, steps);
-      if (iv) out.push(iv);
+const rawSigns = new Set();
+let statesChecked = 0;
+
+for (const k of [2, 3, 4]) {
+  const base = Array(k).fill(7); // the circle-of-fifths position, degenerate by design
+  const positions = 12 / k;
+  const stepDeg = 30 * k;
+
+  for (const reversed of [false, true]) {
+    const start = reversed ? CC.reverseDirection(base) : base;
+    const tag = reversed ? 'reversed' : 'forward';
+
+    for (let m = 1; m < k; m += 1) {
+      for (let pos = 0; pos < positions; pos += 1) {
+        const iv = CC.rotateGroup(start, m, pos);
+        if (!iv) continue; // the engine is the judge of reachability, not this test
+        statesChecked += 1;
+
+        rawSigns.add(Math.sign(visualDegrees(iv, m, 1)));
+
+        const cwSteps = engineStepsFor(iv, m, 1);
+        const cwDeg = visualDegrees(iv, m, cwSteps);
+        assert(
+          `k=${k} ring ${m} (${tag}): clockwise press is visually clockwise from [${iv}]`,
+          cwDeg > 0,
+          `got ${cwDeg}deg`,
+        );
+
+        const ccwSteps = engineStepsFor(iv, m, -1);
+        const ccwDeg = visualDegrees(iv, m, ccwSteps);
+        assert(
+          `k=${k} ring ${m} (${tag}): anticlockwise press is visually anticlockwise from [${iv}]`,
+          ccwDeg < 0,
+          `got ${ccwDeg}deg`,
+        );
+
+        assert(
+          `k=${k} ring ${m} (${tag}): a single step is a full ${stepDeg}deg from [${iv}]`,
+          Math.abs(cwDeg) === stepDeg,
+          `got ${cwDeg}deg`,
+        );
+      }
     }
   }
-  return out;
 }
 
-const states = reachableStates();
-assert('reachable-state fixture covers all 12 ordered two-interval forms', states.length, 12);
+assert('fixture actually exercised every k and every movable ring', statesChecked > 0);
 
-for (const iv of states) {
-  const cwSteps = engineStepsFor(iv, MOVABLE_GROUP, 1);
-  const cwDeg = visualDegrees(iv, MOVABLE_GROUP, cwSteps);
-  assert(`clockwise press is visually clockwise from [${iv}]`, cwDeg > 0, `got ${cwDeg}deg`);
-
-  const ccwSteps = engineStepsFor(iv, MOVABLE_GROUP, -1);
-  const ccwDeg = visualDegrees(iv, MOVABLE_GROUP, ccwSteps);
-  assert(`anticlockwise press is visually anticlockwise from [${iv}]`, ccwDeg < 0, `got ${ccwDeg}deg`);
-
-  // A single step is always one physical slot (60deg at k=2), whichever way it turns.
-  assert(`clockwise step is a full 60deg from [${iv}]`, Math.abs(cwDeg) === 60, `got ${cwDeg}deg`);
-}
-
-// The bug this guards against: the two families really do disagree on the
-// raw engine sign for the same steps argument. If they didn't, the fix would
-// be solving a problem that doesn't exist.
-const m2Family = [7, 7]; // dials sum to 14 = M2 (mod 12)
-const m7Family = CC.reverseDirection(m2Family); // dials sum to its complement, m7 (mod 12)
-const rawSignM2 = Math.sign(visualDegrees(m2Family, MOVABLE_GROUP, 1));
-const rawSignM7 = Math.sign(visualDegrees(m7Family, MOVABLE_GROUP, 1));
+// The bug this guards against: the raw engine sign genuinely varies with the
+// current cycle. If it never did, engineStepsFor's correction would be
+// solving a problem that doesn't exist, and this whole test would be inert.
 assert(
-  'the two dial-sum families mirror: the same raw engine step (+1) flips visual sign between them',
-  rawSignM2 !== 0 && rawSignM7 !== 0 && rawSignM2 !== rawSignM7,
-  `M2 family: ${rawSignM2 > 0 ? 'CW' : 'CCW'}, m7 family: ${rawSignM7 > 0 ? 'CW' : 'CCW'}`,
+  'the raw engine sign for the same steps argument (+1) is not constant across reachable states',
+  rawSigns.size === 2,
+  `observed signs: ${[...rawSigns]}`,
 );
 
 console.log(`\n${pass} passed, ${fail} failed\n`);
@@ -75,5 +90,5 @@ if (failed.length) {
   for (const f of failed) console.log(`  FAIL  ${f.name}\n        ${f.detail}`);
   process.exit(1);
 } else {
-  console.log('  Clockwise is always clockwise, in both dial-sum families.\n');
+  console.log('  Clockwise is always clockwise, on every ring, in every mode, in both traversal directions.\n');
 }

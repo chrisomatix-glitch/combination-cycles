@@ -3,10 +3,12 @@
  *
  * Mobile-first: single column at narrow widths (360px minimum), dials move
  * beside the circle once there is room. Colour palette is Okabe-Ito
- * (colourblind-safe), shared here between the two whole-tone rings and
- * intended for reuse by the notation in a later phase. Colour is never the
- * only cue: the locked ring is round, the movable ring is diamond-shaped, so
- * the distinction survives greyscale printing.
+ * (colourblind-safe), one hue per ring index, shared between the circle, the
+ * dials and the rotate/swap controls via the --color-ring-N custom
+ * properties below, so the same ring reads as the same colour everywhere and
+ * stays stable across mode switches. Colour is never the only cue: ring 0 is
+ * round, ring 1 a diamond, ring 2 a triangle, ring 3 a pentagon, so the
+ * distinction survives greyscale printing.
  */
 
 :root {
@@ -16,9 +18,12 @@
   --color-muted: #5a5a5a;
   --color-border: #cfcfcf;
 
-  --color-locked: #0072b2;   /* Okabe-Ito blue */
-  --color-movable: #d55e00;  /* Okabe-Ito vermillion */
+  --color-ring-0: #0072b2; /* Okabe-Ito blue      — locked ring */
+  --color-ring-1: #d55e00; /* Okabe-Ito vermillion */
+  --color-ring-2: #009e73; /* Okabe-Ito bluish green */
+  --color-ring-3: #cc79a7; /* Okabe-Ito reddish purple */
   --color-disabled: #d8d8d8;
+  --color-armed: #e6b800;
 
   --focus-ring: 3px solid #005fcc;
   --touch-target: 44px;
@@ -59,6 +64,33 @@ body {
   margin: 0;
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+/* --- Mode selector ------------------------------------------------------ */
+
+.mode-select {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  flex-wrap: wrap;
+}
+
+.mode-btn {
+  min-height: var(--touch-target);
+  padding: 0.4rem 0.9rem;
+  border: 2px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mode-btn[aria-pressed='true'] {
+  border-color: var(--color-ring-0);
+  background: color-mix(in srgb, var(--color-ring-0) 15%, white);
 }
 
 .layout {
@@ -128,18 +160,14 @@ body {
   color: var(--color-disabled);
   border-color: var(--color-disabled);
   background: var(--color-bg);
+  text-decoration: line-through;
   cursor: not-allowed;
 }
 
 .dial__option.is-current {
-  border-color: var(--color-locked);
-  background: color-mix(in srgb, var(--color-locked) 15%, white);
+  border-color: var(--dial-color, var(--color-ring-0));
+  background: color-mix(in srgb, var(--dial-color, var(--color-ring-0)) 15%, white);
   font-weight: 700;
-}
-
-.dial[data-dial='1'] .dial__option.is-current {
-  border-color: var(--color-movable);
-  background: color-mix(in srgb, var(--color-movable) 15%, white);
 }
 
 .dial__option.is-compensating {
@@ -154,7 +182,8 @@ body {
 
 .dial__option:focus-visible,
 .btn:focus-visible,
-.circle-holder:focus-visible {
+.mode-btn:focus-visible,
+.circle-holder :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
 }
@@ -187,6 +216,7 @@ body {
 .ring {
   transform-box: view-box;
   transform-origin: 150px 150px;
+  outline: none;
 }
 
 .ring--movable {
@@ -197,28 +227,70 @@ body {
   cursor: grabbing;
 }
 
+.ring--movable.is-armed .note__shape {
+  stroke: var(--color-armed);
+  stroke-width: 4;
+}
+
 .note__hit {
   fill: transparent;
 }
 
-.note--locked .note__shape {
-  fill: var(--color-locked);
+.note--ring0 .note__shape {
+  fill: var(--color-ring-0);
   stroke: #ffffff;
   stroke-width: 2;
 }
 
-.note--movable .note__shape {
-  fill: var(--color-movable);
+.note--ring1 .note__shape {
+  fill: var(--color-ring-1);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.note--ring2 .note__shape {
+  fill: var(--color-ring-2);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.note--ring3 .note__shape {
+  fill: var(--color-ring-3);
   stroke: #ffffff;
   stroke-width: 2;
 }
 
 .note__label {
   fill: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   pointer-events: none;
   user-select: none;
+}
+
+/* --- Ring rotate controls ------------------------------------------------ */
+
+.ring-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.ring-control {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.35rem;
+  border: 2px solid var(--ring-color, var(--color-border));
+  border-radius: 999px;
+}
+
+.ring-control__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  padding: 0 0.15rem;
 }
 
 .circle-controls {
@@ -239,8 +311,42 @@ body {
 }
 
 .btn--icon {
-  font-size: 1.2rem;
-  padding: 0.4rem 0.7rem;
+  font-size: 1.1rem;
+  padding: 0.3rem 0.55rem;
+  min-width: 38px;
+  min-height: 38px;
+}
+
+/* --- Swap controls -------------------------------------------------------- */
+
+.swap-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn--swap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: var(--touch-target);
+  padding: 0.3rem 0.6rem;
+  border: 2px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--swatch-color, var(--color-border));
+  border: 1px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--color-border);
 }
 
 .hint {
@@ -249,6 +355,12 @@ body {
   text-align: center;
   margin: 0;
   max-width: 320px;
+}
+
+.hint--status {
+  min-height: 1.2em;
+  color: var(--color-armed);
+  font-weight: 600;
 }
 
 /* --- Readout ------------------------------------------------------------ */
@@ -281,7 +393,7 @@ body {
   display: inline-block;
   margin-top: 0.4rem;
   padding: 0.2rem 0.6rem;
-  border: 2px solid var(--color-movable);
+  border: 2px solid var(--color-ring-1);
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
@@ -289,4 +401,19 @@ body {
 
 .readout__badge[hidden] {
   display: none;
+}
+
+/* --- Small phones: k = 4 is the busiest mode, so trim spacing further --- */
+
+@media (max-width: 380px) {
+  .dial__option {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.2rem 0.3rem;
+    font-size: 0.8rem;
+  }
+
+  .ring-control__label {
+    display: none;
+  }
 }
