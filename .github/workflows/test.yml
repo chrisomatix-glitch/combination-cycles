@@ -1,7 +1,8 @@
 name: tests
 
-# Runs the engine's test suite in GitHub's cloud on every push, so the
-# enumeration can be verified without a local Node installation.
+# Runs the engine, UI and reachability test suites in GitHub's cloud on
+# every push, so the enumeration and the interface's coverage of it can be
+# verified without a local Node installation.
 
 on:
   push:
@@ -19,8 +20,14 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Run test suite
+      - name: Run engine test suite
         run: npm test
+
+      - name: Run UI regression suite
+        run: npm run test:ui
+
+      - name: Run reachability suite
+        run: npm run test:reachability
 
       - name: Check the catalogue matches the engine
         run: |
