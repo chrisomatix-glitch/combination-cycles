@@ -52,7 +52,7 @@
       </p>
 
       <section class="audio-controls" id="audio-controls" aria-label="Playback">
-        <div class="register-toggle" role="group" aria-label="Register" id="register-toggle">
+        <div class="toggle-group" role="group" aria-label="Register" id="register-toggle">
           <button type="button" class="toggle-btn" data-mode="bounded" aria-pressed="true">Bounded</button>
           <button type="button" class="toggle-btn" data-mode="literal" aria-pressed="false">Literal</button>
         </div>
@@ -67,6 +67,34 @@
 
         <button type="button" class="btn" id="play-through">Play</button>
       </section>
+    </section>
+
+    <section class="figure-wrap">
+      <div
+        class="figure-holder"
+        id="figure-holder"
+        aria-label="Circle-of-fifths figure. A fixed layout — always C, G, D, A, E, B, F sharp, D flat, A flat, E flat, B flat, F clockwise from the top — with a chord drawn between each pair of consecutive notes in the current cycle."
+      ></div>
+
+      <div class="figure-controls">
+        <div class="toggle-group" role="group" aria-label="Figure colour" id="figure-colour-toggle">
+          <button type="button" class="toggle-btn" data-mono="false" aria-pressed="true">Colour</button>
+          <button type="button" class="toggle-btn" data-mono="true" aria-pressed="false">Monochrome</button>
+        </div>
+      </div>
+
+      <p class="figure-info" id="figure-info" aria-live="polite"></p>
+
+      <div class="figure-export">
+        <label><input type="checkbox" id="figure-export-mono"> Export monochrome</label>
+        <button type="button" class="btn" id="figure-download">Download SVG</button>
+      </div>
+
+      <p class="hint">
+        Same twelve notes, fixed as the circle of fifths — a chord per step of
+        the cycle. Rotations and the retrograde draw the identical figure;
+        only inverting moves it, by reflection.
+      </p>
     </section>
   </div>
 
@@ -86,6 +114,7 @@
   } from './app/state.js';
   import { mountCircle } from './app/circle.js';
   import { mountDials } from './app/dials.js';
+  import { mountFigure, isReflectionSymmetric, buildStandaloneSvg } from './app/figure.js';
   import * as Audio from './app/audio.js';
 
   let catalogue = null;
@@ -137,6 +166,56 @@
     },
   });
   const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
+  const figure = mountFigure(document.getElementById('figure-holder'));
+
+  // --- Figure: colour toggle, info panel, SVG export ------------------------
+  const figureColourToggle = document.getElementById('figure-colour-toggle');
+  const figureInfoEl = document.getElementById('figure-info');
+  const figureExportMonoCheckbox = document.getElementById('figure-export-mono');
+  const figureDownloadBtn = document.getElementById('figure-download');
+  let figureMono = false;
+
+  function renderFigureInfo(state) {
+    const entry = CC.identify(state.intervals, catalogue);
+    const berlinerText = entry.berliner ? `Berliner ${entry.berliner}` : 'no Berliner concordance';
+    const symmetric = isReflectionSymmetric(state.intervals, state.transposition);
+    figureInfoEl.innerHTML = `<strong>${entry.id}</strong> ${entry.name}<br>`
+      + `Also drawn by <strong>${entry.retrogradeOf}</strong> &middot; ${berlinerText}`
+      + (symmetric ? '<br><span class="figure-info__symmetric">Reflection-symmetric — inverting draws the same figure</span>' : '');
+  }
+
+  figureColourToggle.addEventListener('click', (e) => {
+    const btn = e.target.closest('.toggle-btn');
+    if (!btn) return;
+    const mono = btn.dataset.mono === 'true';
+    if (mono === figureMono) return;
+    figureMono = mono;
+    figure.setMonochrome(figureMono);
+    figureColourToggle.querySelectorAll('.toggle-btn').forEach((b) => {
+      b.setAttribute('aria-pressed', String(b === btn));
+    });
+    // A sensible default for the export option below, which stays
+    // independently editable regardless of this on-screen setting
+    // (SPEC.md's Phase 4 brief).
+    figureExportMonoCheckbox.checked = figureMono;
+  });
+
+  figureDownloadBtn.addEventListener('click', () => {
+    const state = getState();
+    const entry = CC.identify(state.intervals, catalogue);
+    const svgText = buildStandaloneSvg(state.intervals, state.transposition, {
+      monochrome: figureExportMonoCheckbox.checked,
+    });
+    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `combination-cycle-${entry.id}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
 
   // --- Mode selector -------------------------------------------------------
   const modeSelect = document.getElementById('mode-select');
@@ -236,7 +315,9 @@
     updatePlayButton();
     circle.render(state, meta);
     dials.render(state, meta);
+    figure.render(state);
     renderReadout(state);
+    renderFigureInfo(state);
     updateRegisterWarning(state);
   }
 

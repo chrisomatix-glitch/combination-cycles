@@ -29,6 +29,9 @@ jobs:
       - name: Run reachability suite
         run: npm run test:reachability
 
+      - name: Run figure suite
+        run: npm run test:figure
+
       - name: Check the catalogue matches the engine
         run: |
           npm run catalogue

@@ -11,6 +11,7 @@
     "test": "node src/cycles.test.js",
     "test:ui": "node app/state.test.js",
     "test:reachability": "node app/reachability.test.js",
+    "test:figure": "node app/figure.test.js",
     "catalogue": "cd src && node gen-catalogue.js"
   }
 }
