@@ -259,6 +259,61 @@ check('legal values for dial 0 of P5-P5-P5',
   ['m2', 'M3', 'P5', 'm7']);
 
 // ===========================================================================
+// 7a. Group-swap utilities: movableGroups, isMovableGroup, swapGroups
+// ===========================================================================
+
+for (const k of [2, 3, 4, 6]) {
+  check(`k=${k}: movableGroups`,
+    CC.movableGroups(k), Array.from({ length: k - 1 }, (_, j) => j + 1));
+}
+
+assert('isMovableGroup: accepts every group movableGroups(k) returns',
+  [2, 3, 4, 6].every((k) => CC.movableGroups(k).every((m) => CC.isMovableGroup(m, k))));
+assert('isMovableGroup: rejects the locked group (0) at every k',
+  [2, 3, 4, 6].every((k) => !CC.isMovableGroup(0, k)));
+assert('isMovableGroup: rejects k and beyond at every k',
+  [2, 3, 4, 6].every((k) => !CC.isMovableGroup(k, k) && !CC.isMovableGroup(k + 1, k)));
+assert('isMovableGroup: rejects non-integers',
+  !CC.isMovableGroup(1.5, 3) && !CC.isMovableGroup(NaN, 4));
+
+// Exhaustive: every (cycle, pair-of-movable-groups) combination at k = 2, 3,
+// 4, 6 — including a === b — agrees with the equivalent reorderGroups() call,
+// is always a valid cycle, and is its own inverse. 99,184 swaps total.
+let swapsChecked = 0;
+for (const k of [2, 3, 4, 6]) {
+  const groups = CC.movableGroups(k);
+  let allAgree = true;
+  let allValid = true;
+  let allInvolutions = true;
+  let checked = 0;
+  for (const iv of CC.allCycles(k)) {
+    for (const a of groups) {
+      for (const b of groups) {
+        checked++;
+        const swapped = CC.swapGroups(iv, a, b);
+        const perm = groups.map((m) => (m === a ? b : m === b ? a : m));
+        const viaReorder = a === b ? [...iv] : CC.reorderGroups(iv, perm);
+        if (swapped.join(',') !== viaReorder.join(',')) allAgree = false;
+        if (!CC.isValidCycle(swapped)) allValid = false;
+        if (CC.swapGroups(swapped, a, b).join(',') !== iv.join(',')) allInvolutions = false;
+      }
+    }
+  }
+  swapsChecked += checked;
+  assert(`k=${k}: swapGroups agrees with reorderGroups (${checked} combinations)`, allAgree);
+  assert(`k=${k}: swapGroups always returns a valid cycle (${checked} combinations)`, allValid);
+  assert(`k=${k}: swapGroups is its own inverse (${checked} combinations)`, allInvolutions);
+}
+assert('swapGroups: exhaustively checked across k=2,3,4,6',
+  swapsChecked === 99184, `checked ${swapsChecked} swaps`);
+
+const throws = (fn) => { try { fn(); return false; } catch (e) { return e instanceof RangeError; } };
+assert('swapGroups: throws on the locked group',
+  throws(() => CC.swapGroups([1, 9], 0, 1)));
+assert('swapGroups: throws on an out-of-range group',
+  throws(() => CC.swapGroups([1, 4, 10], 1, 3)));
+
+// ===========================================================================
 // 8. Groups, spelling, serialisation
 // ===========================================================================
 

@@ -548,6 +548,29 @@ export function reorderGroups(iv, perm) {
 }
 
 /**
+ * The group indices that can be rotated, for a given k. Group 0 is locked —
+ * rotating it would only transpose the whole cycle.
+ */
+export const movableGroups = (k) => Array.from({ length: k - 1 }, (_, j) => j + 1);
+
+export const isMovableGroup = (m, k) => Number.isInteger(m) && m >= 1 && m <= k - 1;
+
+/**
+ * Swap two movable groups. This is the interface primitive — swapping any two
+ * rings always yields a valid cycle, and rotation plus pairwise swaps plus
+ * reversal reaches the whole space at every k, so no permutation picker is
+ * needed. A thin wrapper over reorderGroups().
+ */
+export function swapGroups(iv, a, b) {
+  const k = iv.length;
+  if (!isMovableGroup(a, k) || !isMovableGroup(b, k)) {
+    throw new RangeError(`groups ${a} and ${b} are not both movable for k=${k}`);
+  }
+  if (a === b) return [...iv];
+  return reorderGroups(iv, movableGroups(k).map((m) => (m === a ? b : m === b ? a : m)));
+}
+
+/**
  * Set dial `index` to `value`, compensating into a neighbouring dial.
  *
  * Only k-1 of the k dials are ever free: the intervals of a cycle sum to a

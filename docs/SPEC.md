@@ -247,6 +247,9 @@ CC.groups(iv, t) / CC.groupOfSlot(slot, k)
 CC.rotateGroup(iv, m, steps)       // null if illegal
 CC.reverseDirection(iv)
 CC.reorderGroups(iv, perm)
+CC.movableGroups(k)                // [1 .. k-1]
+CC.isMovableGroup(m, k)
+CC.swapGroups(iv, a, b)            // the interface primitive — thin wrapper over reorderGroups()
 CC.setDial(iv, index, value, { toward })
 CC.legalDialValues(iv, index)
 CC.groupPositions(k)

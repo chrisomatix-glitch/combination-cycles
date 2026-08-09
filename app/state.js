@@ -136,17 +136,12 @@ export function setDialValue(index, value) {
 /**
  * Swap movable rings `m1` and `m2` — the control that makes the full space
  * reachable (SPEC.md's Phase 2 brief, and CC.reorderGroups' own comment: 6 of
- * 39 four-interval cycles are reachable by rotation alone). `perm` starts as
- * the identity on [1 .. k-1] and swaps just the two entries the caller named,
- * so whatever currently occupies ring m1 moves to ring m2 and vice versa,
- * leaving every other ring's occupant untouched.
+ * 39 four-interval cycles are reachable by rotation alone).
  */
 export function swapRings(m1, m2) {
   const k = state.intervals.length;
-  if (m1 === m2 || m1 < 1 || m2 < 1 || m1 > k - 1 || m2 > k - 1) return;
-  const perm = Array.from({ length: k - 1 }, (_, i) => i + 1);
-  [perm[m1 - 1], perm[m2 - 1]] = [perm[m2 - 1], perm[m1 - 1]];
-  const next = CC.reorderGroups(state.intervals, perm);
+  if (m1 === m2 || !CC.isMovableGroup(m1, k) || !CC.isMovableGroup(m2, k)) return;
+  const next = CC.swapGroups(state.intervals, m1, m2);
   if (!next) return; // every pairwise swap is verified legal, but the engine is the judge
   state = { ...state, intervals: next };
   emit({ type: 'swap', m1, m2 });
