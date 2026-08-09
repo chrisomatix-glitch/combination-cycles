@@ -1,0 +1,4 @@
+# Pre-launch: keep the unfinished tool out of search results.
+# Delete this file, and its line in .cpanel.yml, when the tool goes live.
+User-agent: *
+Disallow: /
