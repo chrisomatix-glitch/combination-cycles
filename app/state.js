@@ -161,6 +161,21 @@ export function swapRings(m1, m2) {
   emit({ type: 'swap', m1, m2 });
 }
 
+/**
+ * Jump to a uniformly random cycle at the current k. Degenerate cycles are
+ * excluded by default — otherwise this keeps landing on the chromatic scale
+ * or the circle of fifths, which is a much smaller and less interesting set
+ * than it looks (SPEC.md's Phase 3.1 brief). The genuine-cycle count is never
+ * zero at any k (8/60/312 — SPEC.md §2), so the pool is never empty.
+ */
+export function randomise({ includeDegenerate = false } = {}) {
+  const k = state.intervals.length;
+  const pool = CC.allCycles(k).filter((iv) => includeDegenerate || !CC.isDegenerate(iv));
+  const choice = pool[Math.floor(Math.random() * pool.length)];
+  state = { ...state, intervals: choice };
+  emit({ type: 'randomise' });
+}
+
 /** Re-read state from the URL (e.g. on popstate) and notify listeners. */
 export function reloadFromLocation() {
   state = fromLocation();

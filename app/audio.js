@@ -59,8 +59,17 @@ export function isAvailable() {
   return !unavailable;
 }
 
+/**
+ * True for MIDI note numbers that exist at all (0-127 — SPEC.md's Phase 3.1
+ * brief: a literal realisation can run tens of semitones past either end).
+ * Callers skip these notes rather than clamping them into range, which would
+ * misrepresent the interval pattern by sounding the wrong pitch.
+ */
+export const isPlayable = (midi) => midi >= 0 && midi <= 127;
+
 /** Play a single MIDI note number (as placeRegister() returns) for `duration` seconds. */
 export async function playMidi(midi, duration = 0.5) {
+  if (!isPlayable(midi)) return;
   const ok = await ensureAudio();
   if (!ok) return;
   try {
@@ -130,7 +139,9 @@ export async function playSequence(notes, msPerNote, { onNote, onDone } = {}) {
       transport.scheduleOnce((time) => {
         if (run.stopped) return;
         try {
-          synth.triggerAttackRelease(window.Tone.Frequency(midi, 'midi').toFrequency(), duration, time);
+          if (isPlayable(midi)) {
+            synth.triggerAttackRelease(window.Tone.Frequency(midi, 'midi').toFrequency(), duration, time);
+          }
         } catch {
           // A single failed note should never break the interface.
         }

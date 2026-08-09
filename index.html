@@ -31,21 +31,20 @@
       <div
         class="circle-holder"
         id="circle-holder"
-        aria-label="Circle of fifths. Each movable ring can be dragged, rotated with arrow keys when focused, or tapped to select it for swapping with another ring."
+        aria-label="Circle of fifths. Click any note to hear it. Movable rings can be dragged or rotated with arrow keys when focused."
       ></div>
 
       <div class="ring-controls" id="ring-controls" aria-label="Rotate rings"></div>
 
       <div class="circle-controls">
         <button type="button" class="btn" id="invert-direction">Invert</button>
+        <button type="button" class="btn" id="randomise">Randomise</button>
       </div>
 
       <div class="swap-controls" id="swap-controls" aria-label="Swap rings"></div>
 
-      <p class="hint hint--status" id="swap-status" aria-live="polite"></p>
-
       <p class="hint">
-        Drag a ring to rotate it. Tap one ring, then another, to swap them —
+        Drag a ring to rotate it, or use the buttons above to swap two rings —
         that's how every combination becomes reachable, not just the ones
         rotation alone can reach. Inverting reflects the cycle onto its
         catalogue partner — k-n becomes k-nI, and back — changing both the
@@ -57,6 +56,8 @@
           <button type="button" class="toggle-btn" data-mode="bounded" aria-pressed="true">Bounded</button>
           <button type="button" class="toggle-btn" data-mode="literal" aria-pressed="false">Literal</button>
         </div>
+
+        <p class="hint hint--warning" id="register-warning" aria-live="polite" hidden></p>
 
         <div class="tempo-control">
           <label for="tempo">Tempo</label>
@@ -81,7 +82,7 @@
   import * as CC from './src/cycles.js';
   import {
     initState, getState, subscribe, MODES, setMode, rotateVisual, invert,
-    setDialValue, swapRings, reloadFromLocation,
+    setDialValue, swapRings, randomise, reloadFromLocation,
   } from './app/state.js';
   import { mountCircle } from './app/circle.js';
   import { mountDials } from './app/dials.js';
@@ -91,22 +92,47 @@
   let registerMode = 'bounded'; // view-only: SPEC.md §4 says register carries no information
   let tempo = 120; // BPM-ish: notes per minute
 
-  const statusEl = document.getElementById('swap-status');
+  /**
+   * The register-placed sequence for the current cycle, indices 0-11 lined up
+   * with circle slots and index 12 the closing return-to-start note (SPEC.md's
+   * Phase 3.1 brief). Bounded is placeRegister() unchanged. Literal anchors its
+   * first note at the centre and only climbs from there (never resetting), so
+   * a five-to-seven-octave cycle ends up almost entirely above the centre —
+   * re-centre the whole realisation by whole octaves on its own midpoint
+   * instead, which is the only shift that preserves the interval pattern.
+   */
+  function registeredNotes(state) {
+    const raw = CC.placeRegister(state.intervals, {
+      mode: registerMode, transposition: state.transposition, closeCycle: true,
+    });
+    if (registerMode !== 'literal') return raw;
+    const mid = (Math.max(...raw) + Math.min(...raw)) / 2;
+    const offset = Math.round((60 - mid) / 12) * 12;
+    return raw.map((n) => n + offset);
+  }
+
+  const registerWarningEl = document.getElementById('register-warning');
+
+  /** Surface cycles literal mode still can't fit, rather than silently mangling them. */
+  function updateRegisterWarning(state) {
+    if (registerMode !== 'literal') { registerWarningEl.hidden = true; return; }
+    const notes = registeredNotes(state);
+    const outCount = notes.filter((n) => !Audio.isPlayable(n)).length;
+    if (outCount === 0) { registerWarningEl.hidden = true; return; }
+    const span = Math.max(...notes) - Math.min(...notes);
+    const octaves = Math.round(span / 12);
+    registerWarningEl.hidden = false;
+    registerWarningEl.textContent = `Spans ${octaves} octaves; ${outCount} `
+      + `note${outCount === 1 ? '' : 's'} outside the audible range `
+      + `${outCount === 1 ? 'is' : 'are'} not sounded.`;
+  }
 
   const circle = mountCircle(document.getElementById('circle-holder'), {
     onRotate: rotateVisual,
-    onSwap: swapRings,
-    onArm: (m) => {
-      statusEl.textContent = m === null
-        ? ''
-        : `Ring ${m} selected — tap or click another ring to swap with it, or tap it again to cancel.`;
-    },
     onNotePlay: (slot) => {
-      const state = getState();
-      const notes = CC.placeRegister(state.intervals, {
-        mode: registerMode, transposition: state.transposition, closeCycle: false,
-      });
-      Audio.playMidi(notes[slot]);
+      // playMidi() itself skips notes outside the audible MIDI range, so the
+      // highlight always fires even for a click that ends up silent.
+      Audio.playMidi(registeredNotes(getState())[slot]);
       circle.highlightSlot(slot);
     },
   });
@@ -211,6 +237,7 @@
     circle.render(state, meta);
     dials.render(state, meta);
     renderReadout(state);
+    updateRegisterWarning(state);
   }
 
   // A mode switch changes how many rings and dials there are, so it rebuilds
@@ -221,7 +248,6 @@
     dials.setMode(k);
     buildRingControls(k);
     buildSwapControls(k);
-    statusEl.textContent = '';
     document.getElementById('mode-subtitle').textContent = `${k}-interval mode`;
     document.querySelectorAll('.mode-btn').forEach((btn) => {
       btn.setAttribute('aria-pressed', String(Number(btn.dataset.k) === k));
@@ -250,10 +276,7 @@
       updatePlayButton();
       return;
     }
-    const state = getState();
-    const notes = CC.placeRegister(state.intervals, {
-      mode: registerMode, transposition: state.transposition, closeCycle: true,
-    });
+    const notes = registeredNotes(getState());
     // playSequence() marks itself playing synchronously (before its own
     // first await), so isPlaying() is already true once this call returns —
     // update the button after starting it, not before.
@@ -278,6 +301,7 @@
     registerToggle.querySelectorAll('.toggle-btn').forEach((b) => {
       b.setAttribute('aria-pressed', String(b === btn));
     });
+    updateRegisterWarning(getState());
   });
 
   const initial = initState();
@@ -290,6 +314,7 @@
   });
 
   document.getElementById('invert-direction').addEventListener('click', () => invert());
+  document.getElementById('randomise').addEventListener('click', () => randomise());
 
   window.addEventListener('popstate', () => {
     const state = reloadFromLocation();

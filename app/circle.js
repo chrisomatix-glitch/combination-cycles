@@ -19,17 +19,13 @@
  * is unambiguous even with three movable rings at k = 4.
  *
  * Ring swapping (SPEC.md's Phase 2 brief — the control that makes the full
- * cycle space reachable) is a *tap*, not a drag: this reuses the fact that a
- * drag with near-zero displacement was already a no-op in Phase 1. Tap one
- * movable ring to arm it, tap a different one to swap; tapping the armed
- * ring again cancels. The same arm/swap toggle is reachable from the
- * keyboard (Enter/Space on a focused ring).
- *
- * That same tap also plays the note under the pointer (SPEC.md's Phase 3
- * brief: clicking a note is the primary interaction). Arming/swapping and
- * playing are independent side effects of the one gesture, not alternatives.
- * The locked ring has no drag/swap behaviour, so its notes just get a plain
- * click listener.
+ * cycle space reachable) lives entirely in the colour-coded swap buttons in
+ * index.html now. Phase 2 tried a tap-to-arm gesture on the rings themselves,
+ * but a tap is also how a note plays (SPEC.md's Phase 3 brief), and the two
+ * collided: clicking through a cycle in order meant every change of ring
+ * armed a swap instead of sounding the next note (SPEC.md's Phase 3.1 brief).
+ * So clicking or tapping a note now only ever plays it, on every ring,
+ * unconditionally — no arming, no swapping, no keyboard toggle.
  */
 import * as CC from '../src/cycles.js';
 
@@ -96,7 +92,7 @@ function shapeEl(ring) {
   });
 }
 
-export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) {
+export function mountCircle(root, { onRotate, onNotePlay } = {}) {
   const svg = svgEl('svg', {
     viewBox: '0 0 300 300',
     class: 'circle-svg',
@@ -108,26 +104,6 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
   let ringEls = [];
   let noteEls = []; // indexed by slot, rebuilt every draw()
   let animating = false;
-  let armedRing = null;
-
-  function setArmed(m) {
-    if (armedRing !== null && ringEls[armedRing]) ringEls[armedRing].classList.remove('is-armed');
-    armedRing = m;
-    if (armedRing !== null && ringEls[armedRing]) ringEls[armedRing].classList.add('is-armed');
-    onArm?.(armedRing);
-  }
-
-  function armOrSwap(m) {
-    if (armedRing === null) {
-      setArmed(m);
-    } else if (armedRing === m) {
-      setArmed(null);
-    } else {
-      const a = armedRing;
-      setArmed(null);
-      onSwap?.(a, m);
-    }
-  }
 
   function draw(intervals, transposition) {
     for (const g of ringEls) g.textContent = '';
@@ -151,10 +127,10 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
       label.textContent = CC.PITCH_NAMES[pcs[slot]];
       note.append(hit, shape, label);
       if (ring === 0) {
-        // The locked ring has no drag/swap handling, so a plain click plays
-        // the note. Movable rings play from the tap branch of their own
-        // pointer handling instead (attachRingHandlers), since that's the
-        // one place that already distinguishes a tap from a drag.
+        // The locked ring has no drag handling, so a plain click plays the
+        // note. Movable rings play from the tap branch of their own pointer
+        // handling instead (attachRingHandlers), since that's the one place
+        // that already distinguishes a tap from a drag.
         note.addEventListener('click', () => onNotePlay?.(slot));
       }
       noteEls[slot] = note;
@@ -213,7 +189,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
     }
   }
 
-  // --- Drag-to-rotate / tap-to-swap on a movable ring --------------------
+  // --- Drag-to-rotate / tap-to-play on a movable ring ---------------------
   const angleAt = (clientX, clientY) => {
     const rect = svg.getBoundingClientRect();
     const dx = clientX - (rect.left + rect.width / 2);
@@ -278,13 +254,11 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
       dragStart = null;
       ringEl.classList.remove('is-dragging');
       if (dist < TAP_THRESHOLD_PX) {
-        // Barely moved: a tap, not a drag. In Phase 1 this was a silent
-        // no-op; Phase 2 made it arm the ring for swapping; Phase 3 also
-        // plays the note under the pointer, since a tap on a movable ring's
-        // note never reaches the locked ring's own click listener.
+        // Barely moved: a tap, not a drag. It plays the note under the
+        // pointer — a tap on a movable ring's note never reaches the locked
+        // ring's own click listener, so this is the only place that can.
         ringEl.style.transition = 'none';
         ringEl.style.transform = 'none';
-        armOrSwap(m);
         if (slot !== null) onNotePlay?.(slot);
         return;
       }
@@ -302,16 +276,12 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
       } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
         e.preventDefault();
         if (!animating) onRotate?.(m, 1);
-      } else if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        armOrSwap(m);
       }
     });
   }
 
   /** Rebuild the ring elements for a new k. Call before the first render() at that k. */
   function setMode(newK) {
-    setArmed(null);
     k = newK;
     degreesPerStep = 30 * k;
     svg.textContent = '';
@@ -321,7 +291,7 @@ export function mountCircle(root, { onRotate, onSwap, onArm, onNotePlay } = {}) 
         class: `ring ring--${r === 0 ? 'locked' : 'movable'}`,
       });
       if (r > 0) {
-        g.setAttribute('aria-label', `Ring ${r}, movable. Drag or use arrow keys to rotate. Press Enter to select for swapping with another ring.`);
+        g.setAttribute('aria-label', `Ring ${r}, movable. Drag or use arrow keys to rotate.`);
       } else {
         g.setAttribute('aria-label', 'Locked ring. Does not rotate.');
       }

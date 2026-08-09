@@ -23,7 +23,7 @@
   --color-ring-2: #009e73; /* Okabe-Ito bluish green */
   --color-ring-3: #cc79a7; /* Okabe-Ito reddish purple */
   --color-disabled: #d8d8d8;
-  --color-armed: #e6b800;
+  --color-warning: #b45309;
 
   --focus-ring: 3px solid #005fcc;
   --touch-target: 44px;
@@ -227,11 +227,6 @@ body {
 
 .ring--movable.is-dragging {
   cursor: grabbing;
-}
-
-.ring--movable.is-armed .note__shape {
-  stroke: var(--color-armed);
-  stroke-width: 4;
 }
 
 .note__hit {
@@ -438,9 +433,8 @@ body {
   max-width: 320px;
 }
 
-.hint--status {
-  min-height: 1.2em;
-  color: var(--color-armed);
+.hint--warning {
+  color: var(--color-warning);
   font-weight: 600;
 }
 
