@@ -45,7 +45,8 @@ body {
   padding: 0.75rem;
 }
 
-.app {
+.app,
+.app-footer__inner {
   max-width: 640px;
   margin: 0 auto;
 }
@@ -54,7 +55,8 @@ body {
    brief); .layout's own flex-wrap still stacks the figure below on anything
    narrower, so this only widens the page once there's a genuine use for it. */
 @media (min-width: 900px) {
-  .app {
+  .app,
+  .app-footer__inner {
     max-width: 900px;
   }
 }
@@ -581,6 +583,34 @@ body {
 
 .readout__badge[hidden] {
   display: none;
+}
+
+/* --- Footer ---------------------------------------------------------------
+ * Attribution and licensing only — kept small and muted so it reads as
+ * back-matter, not another control. .app-footer__inner shares .app's
+ * max-width (see the top of this file) rather than duplicating it.
+ */
+
+.app-footer {
+  margin-top: 1.5rem;
+  padding: 0.75rem 0.75rem 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.app-footer__inner {
+  font-size: 0.7rem;
+  line-height: 1.6;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.app-footer__inner a {
+  color: inherit;
+}
+
+.app-footer__inner a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
 }
 
 /* --- Small phones: k = 4 is the busiest mode, so trim spacing further --- */
