@@ -27,13 +27,41 @@
  * Contextual spelling was deliberately rejected (Phase 5's brief: 182/236
  * realisations would need double accidentals under it).
  *
+ * Register bands and octave brackets: literal mode can wander up to eleven
+ * octaves, which used to mean runs of ten-plus ledger lines. Instead, a note
+ * far enough from the centre is WRITTEN one or two octaves closer in and
+ * covered by an 8va/8vb/15ma/15mb bracket, exactly as real engraving does —
+ * the note still SOUNDS at its real pitch (registeredNotes() is untouched),
+ * only where it's drawn changes. Thresholds (fixed, not derived): below
+ * MIDI 33 (A1) is 8vb, below 21 (A0) is 15mb; above 89 (F6) is 8va, above
+ * 101 (F7) is 15ma; everything else is plain. Consecutive same-band notes
+ * share one bracket (octaveBandSpans()); a rest always breaks a run, since
+ * there's no pitch to notate an octave shift for. Bounded mode's notes all
+ * land in the plain band by construction (verified across all 118 catalogue
+ * entries — see app/notation.test.js), so this never fires there; nothing
+ * here is mode-gated, it just naturally never triggers.
+ *
  * Clef: bounded mode is about an octave, so one clef for the whole passage,
- * chosen to minimise ledger lines. Literal mode can wander up to eleven
- * octaves, so each note gets its own clef by a fixed treble/bass split at
- * middle C — VexFlow's StaveNote takes a per-note `clef` independent of the
- * stave's own, and ClefNote is a zero-tick tickable (ignoreTicks=true)
- * designed exactly for inserting the clef-change glyph mid-voice, so this is
- * one continuous stave/voice, not a stack of separate staves.
+ * chosen to minimise ledger lines (now counted exactly via VexFlow's own
+ * staff-line formula, not approximated — see staffLine()/ledgerLineCount()
+ * below). Literal mode assigns each note its own clef by a fixed
+ * treble/bass split at middle C, using its WRITTEN position (after any
+ * octave-bracket shift), not the sounding pitch — VexFlow's StaveNote takes
+ * a per-note `clef` independent of the stave's own, and ClefNote is a
+ * zero-tick tickable (ignoreTicks=true) designed exactly for inserting the
+ * clef-change glyph mid-voice, so this is one continuous stave/voice, not a
+ * stack of separate staves.
+ *
+ * Stem direction: StaveNote defaults to stem-up unconditionally unless
+ * `autoStem: true` is passed — confirmed against VexFlow's own source,
+ * where the constructor is literally `stemDirection ?? Stem.UP`. Passing
+ * autoStem delegates to VexFlow's calculateOptimalStemDirection(), which
+ * implements the standard rule (on/above the middle line, stem down; below
+ * it, stem up) from the same keys/clef every note is already built from —
+ * so it automatically follows the WRITTEN position post-bracket, with no
+ * separate calculation needed here. stemDirectionFor() below is a pure
+ * reimplementation of that identical rule, exported only so the test suite
+ * can check it without a DOM to run real VexFlow in.
  *
  * Notehead colour is CC.groupOfSlot(slot, k) through the same four-colour
  * palette as the ring and the figure (RING_COLORS below is a literal copy of
@@ -61,24 +89,58 @@ const MONO_COLOR = RING_COLORS[0];
 const SHAPE_GLYPHS = ['●', '◆', '▲', '⬟'];
 
 const ACCIDENTAL_ASCII = { '♯': '#', '♭': 'b' };
-
-// Approximate MIDI range each clef covers without ledger lines (the staff
-// lines themselves: E4-F5 for treble, G2-A3 for bass). Used only to choose
-// a clef, not to position anything — VexFlow computes the real geometry.
-const CLEF_STAFF_RANGE = { treble: [64, 77], bass: [43, 57] };
 const REST_KEY = { treble: 'b/4', bass: 'd/3' };
 
-function ledgerCost(midi, clef) {
-  const [lo, hi] = CLEF_STAFF_RANGE[clef];
-  if (midi < lo) return lo - midi;
-  if (midi > hi) return midi - hi;
+// ---------------------------------------------------------------------------
+// Exact staff-line geometry (matches VexFlow's Tables.keyProperties(),
+// verified against its source rather than approximated) — used for clef
+// choice, ledger-line counting, octave-bracket placement, and stem
+// direction, so all four agree on the same notion of "where this sits".
+// ---------------------------------------------------------------------------
+
+const NOTE_INDEX = {
+  c: 0, d: 1, e: 2, f: 3, g: 4, a: 5, b: 6,
+};
+const CLEF_LINE_SHIFT = { treble: 0, bass: 6 };
+
+/**
+ * VexFlow's own line formula: each diatonic letter step moves half a line,
+ * so lines land on whole numbers (1 = bottom line, 5 = top) and spaces on
+ * half-integers, normalised so line 3 is always the clef's own middle line
+ * for both clefs (B4 in treble, D3 in bass — the user-facing rule's own
+ * named examples) via the clef-specific shift.
+ */
+export function staffLine(letter, octave, clef) {
+  const baseIndex = octave * 7 - 4 * 7;
+  return (baseIndex + NOTE_INDEX[letter]) / 2 + CLEF_LINE_SHIFT[clef];
+}
+
+/** How many ledger lines a staff position needs — 0 inside the five lines. */
+export function ledgerLineCount(line) {
+  if (line > 5) return Math.floor(line - 5);
+  if (line < 1) return Math.floor(1 - line);
   return 0;
 }
 
+/**
+ * The standard stem-direction rule, matching VexFlow's own
+ * calculateOptimalStemDirection() for a single note (verified against
+ * source: `decider < MIDDLE_LINE(3) ? Stem.UP : Stem.DOWN`). Not used at
+ * render time — StaveNote's `autoStem: true` delegates to VexFlow's real
+ * implementation of this same rule — exported only for testing.
+ */
+export function stemDirectionFor(line) {
+  return line < 3 ? 'up' : 'down';
+}
+
+function ledgerCostForClef(entry, clef) {
+  return ledgerLineCount(staffLine(entry.letter, entry.octave, clef));
+}
+
 /** One clef for an entire bounded-register passage, minimising ledger lines. */
-function chooseSingleClef(midiList) {
-  const real = midiList.filter((m) => isPlayable(m));
-  const cost = (clef) => real.reduce((sum, m) => sum + ledgerCost(m, clef), 0);
+function chooseSingleClef(entries) {
+  const real = entries.filter((e) => !e.isRest);
+  const cost = (clef) => real.reduce((sum, e) => sum + ledgerCostForClef(e, clef), 0);
   return cost('treble') <= cost('bass') ? 'treble' : 'bass';
 }
 
@@ -87,6 +149,56 @@ const clefForNote = (midi) => (midi >= 60 ? 'treble' : 'bass');
 
 function parseName(name) {
   return { letter: name[0].toLowerCase(), accidental: ACCIDENTAL_ASCII[name.slice(1)] || '' };
+}
+
+// ---------------------------------------------------------------------------
+// Register bands (octave brackets)
+// ---------------------------------------------------------------------------
+
+const PLAIN_BAND = { name: 'plain', shift: 0 };
+const REGISTER_BANDS = [
+  // Order matters: the more extreme band must be checked first, since its
+  // range is a strict subset of the less extreme one's.
+  { name: '15mb', test: (m) => m < 21, shift: 24 },
+  { name: '8vb', test: (m) => m < 33, shift: 12 },
+  { name: '15ma', test: (m) => m > 101, shift: -24 },
+  { name: '8va', test: (m) => m > 89, shift: -12 },
+];
+const BRACKET_SPEC = {
+  '15mb': { text: '15', superscript: 'mb', position: 'bottom' },
+  '8vb': { text: '8', superscript: 'vb', position: 'bottom' },
+  '8va': { text: '8', superscript: 'va', position: 'top' },
+  '15ma': { text: '15', superscript: 'ma', position: 'top' },
+};
+
+function registerBandFor(midi) {
+  for (const band of REGISTER_BANDS) if (band.test(midi)) return band;
+  return PLAIN_BAND;
+}
+
+/**
+ * Group consecutive non-rest notes sharing the same non-plain band into
+ * bracket spans — one TextBracket per span. A rest or a plain note always
+ * ends whatever run was open (a rest has no pitch to bracket; a plain note
+ * needs no bracket). Pure and exported so the test suite can check the
+ * concrete M7-M7 case named in the brief directly.
+ */
+export function octaveBandSpans(entries) {
+  const spans = [];
+  let runStart = null;
+  let runBand = null;
+  const close = (endIndex) => {
+    if (runStart !== null) spans.push({ start: runStart, end: endIndex, band: runBand });
+    runStart = null;
+    runBand = null;
+  };
+  entries.forEach((e, i) => {
+    const bandable = !e.isRest && e.band !== 'plain';
+    if (!bandable) { close(i - 1); return; }
+    if (runBand !== e.band) { close(i - 1); runStart = i; runBand = e.band; }
+  });
+  close(entries.length - 1);
+  return spans;
 }
 
 /**
@@ -98,24 +210,44 @@ export function noteSequence(iv, { mode = 'bounded', transposition = 0 } = {}) {
   const names12 = CC.spell(iv, { mode: 'fixed', transposition });
   const names = [...names12, names12[0]];
   const midi = registeredNotes(iv, { mode, transposition });
-  const singleClef = mode === 'literal' ? null : chooseSingleClef(midi);
 
-  return names.map((name, i) => {
+  // First pass: everything independent of the eventual clef choice, since
+  // bounded's single clef needs the whole list (via chooseSingleClef) built
+  // first.
+  const pre = names.map((name, i) => {
     const slot = i < 12 ? i : 0;
     const { letter, accidental } = parseName(name);
     const m = midi[i];
-    const octave = Math.floor(m / 12) - 1;
+    const isRest = !isPlayable(m);
+    const band = isRest ? PLAIN_BAND : registerBandFor(m);
+    const writtenMidi = m + band.shift;
+    const octave = Math.floor(writtenMidi / 12) - 1;
     return {
       index: i,
       slot,
       group: CC.groupOfSlot(slot, k),
       midi: m,
+      writtenMidi,
+      band: band.name,
+      letter,
       accidental,
+      octave,
       vexKey: `${letter}${accidental}/${octave}`,
-      clef: mode === 'literal' ? clefForNote(m) : singleClef,
-      isRest: !isPlayable(m),
+      isRest,
     };
   });
+
+  const singleClef = mode === 'literal' ? null : chooseSingleClef(pre);
+
+  return pre.map((e) => ({
+    ...e,
+    // Rests use their own out-of-range midi (no band shift ever applies to
+    // them) to at least lean toward a plausible clef; real notes use the
+    // WRITTEN position — after any octave-bracket shift — not the sounding
+    // pitch, per the brief: this is what makes stem direction (which reads
+    // straight off this clef choice) follow the written position too.
+    clef: e.isRest ? clefForNote(e.midi) : (mode === 'literal' ? clefForNote(e.writtenMidi) : singleClef),
+  }));
 }
 
 /** The interval label above note `i` (0-11) — the step it leads into. */
@@ -123,16 +255,19 @@ export const intervalLabel = (iv, i) => CC.intervalName(iv[i % iv.length]);
 
 function requiredHeight(entries) {
   let maxLedger = 0;
+  let hasBracket = false;
   for (const e of entries) {
     if (e.isRest) continue;
-    maxLedger = Math.max(maxLedger, ledgerCost(e.midi, e.clef));
+    maxLedger = Math.max(maxLedger, ledgerCostForClef(e, e.clef));
+    if (e.band !== 'plain') hasBracket = true;
   }
   // A generous overestimate is harmless (just white space); clipping isn't.
-  return 170 + maxLedger * 11;
+  return 170 + maxLedger * 22 + (hasBracket ? 40 : 0);
 }
 
 function buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome }) {
   const tickables = [];
+  const notesByIndex = new Array(entries.length);
   let prevClef = entries[0]?.clef;
 
   entries.forEach((e) => {
@@ -143,9 +278,16 @@ function buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome }) {
 
     let note;
     if (e.isRest) {
-      note = new Flow.StaveNote({ keys: [REST_KEY[e.clef]], duration: 'qr', clef: e.clef });
+      note = new Flow.StaveNote({
+        keys: [REST_KEY[e.clef]], duration: 'qr', clef: e.clef, autoStem: true,
+      });
     } else {
-      note = new Flow.StaveNote({ keys: [e.vexKey], duration: 'q', clef: e.clef });
+      // autoStem delegates stem direction to VexFlow's own middle-line rule
+      // (see the module comment) — no stem_direction override here, since
+      // an explicit one would always win over the note's actual position.
+      note = new Flow.StaveNote({
+        keys: [e.vexKey], duration: 'q', clef: e.clef, autoStem: true,
+      });
       if (e.accidental) note.addModifier(new Flow.Accidental(e.accidental), 0);
       const color = monochrome ? MONO_COLOR : RING_COLORS[e.group % RING_COLORS.length];
       note.setKeyStyle(0, { fillStyle: color, strokeStyle: color });
@@ -160,10 +302,11 @@ function buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome }) {
       note.addModifier(label, 0);
     }
 
+    notesByIndex[e.index] = note;
     tickables.push(note);
   });
 
-  return tickables;
+  return { tickables, notesByIndex };
 }
 
 /** Render one cycle's notation into `container`, replacing its contents. */
@@ -172,7 +315,7 @@ function drawInto(container, iv, { mode, transposition, showIntervalLabels, mono
   container.innerHTML = '';
 
   const entries = noteSequence(iv, { mode, transposition });
-  const tickables = buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome });
+  const { tickables, notesByIndex } = buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome });
   const height = requiredHeight(entries);
   const width = Math.max(220, 70 + tickables.length * 52);
 
@@ -190,6 +333,26 @@ function drawInto(container, iv, { mode, transposition, showIntervalLabels, mono
 
   new Flow.Formatter().joinVoices([voice]).formatToStave([voice], stave);
   voice.draw(context, stave);
+
+  // Octave brackets are drawn after voice.draw(), not before: TextBracket
+  // reads each note's stave via checkStave(), which is only set once the
+  // note has actually been drawn onto one.
+  for (const span of octaveBandSpans(entries)) {
+    const spec = BRACKET_SPEC[span.band];
+    let maxLedger = 0;
+    for (let i = span.start; i <= span.end; i += 1) {
+      maxLedger = Math.max(maxLedger, ledgerCostForClef(entries[i], entries[i].clef));
+    }
+    const bracket = new Flow.TextBracket({
+      start: notesByIndex[span.start],
+      stop: notesByIndex[span.end],
+      text: spec.text,
+      superscript: spec.superscript,
+      position: spec.position,
+    });
+    bracket.setLine(2 + maxLedger);
+    bracket.setContext(context).draw();
+  }
 
   return container.querySelector('svg');
 }

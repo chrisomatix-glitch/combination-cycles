@@ -623,6 +623,17 @@ body {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  /* text-align, not flex justify-content: the SVG is narrower than this
+     container most of the time and needs centring same as the ring, but
+     when literal mode's content is WIDER than the container it needs to
+     stay scrollable without its start edge going inaccessible — the classic
+     failure mode of centring an overflowing flex/grid item. inline-block +
+     text-align is the older, universally-predictable way to get both. */
+  text-align: center;
+}
+
+.notation-svg-holder {
+  display: inline-block;
 }
 
 .notation-svg-holder svg {
