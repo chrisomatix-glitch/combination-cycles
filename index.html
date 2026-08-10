@@ -68,6 +68,8 @@
         </div>
 
         <button type="button" class="btn" id="play-through">Play</button>
+
+        <p class="hint" id="audio-status" aria-live="polite" hidden>Loading piano…</p>
       </section>
     </section>
 
@@ -355,6 +357,11 @@
   const tempoInput = document.getElementById('tempo');
   const tempoValue = document.getElementById('tempo-value');
   const registerToggle = document.getElementById('register-toggle');
+  const audioStatusEl = document.getElementById('audio-status');
+
+  Audio.onLoadingChange((loading) => {
+    audioStatusEl.hidden = !loading;
+  });
 
   function updatePlayButton() {
     playBtn.textContent = Audio.isPlaying() ? 'Stop' : 'Play';
