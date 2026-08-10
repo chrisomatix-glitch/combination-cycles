@@ -99,8 +99,6 @@ colouristic passages in *Movement for Viola and Piano* (2010) through to
 combination cycles deployed leitmotivically, one per character or character
 group.
 
-http://hdl.handle.net/11427/27459
-
 Combination cycles in the broader sense are not new — the octatonic scale is
 one, and Ives, Lutoslawski and Ades all used alternating-interval patterns,
 though not the twelve-note cyclical forms. The mathematics of the twelve-note
@@ -134,6 +132,11 @@ Every cycle named in the portfolio validates against the engine:
 
 Note that Retief's cycle and the Portuguese one are 3-8 and 3-8I — the same
 cycle and its inversion, assigned to opposing parties in the narrative.
+
+## References
+> Jeffery, C. (2017). *Portfolio of Original Compositions* [DMus portfolio].
+> South African College of Music, University of Cape Town.
+> <http://hdl.handle.net/11427/27459>
 
 > Berliner, A. H., Castro, D., Merritt, J., & Southard, C. (2018). Expanded
 > interval cycles. *Journal of Mathematics and Music*, 12(1), 21–33.
