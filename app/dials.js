@@ -13,6 +13,16 @@
  * that stops being true (every state has some values greyed out), which is
  * why the disabled affordance has to read as deliberate: a title explaining
  * why, not just a dimmed button that looks broken.
+ *
+ * Rendered as k vertical strips side by side (one per interval, in cycle
+ * order) rather than k wrapped horizontal grids — a column of ascending
+ * values reads as a dial, which a 4-wide wrapped grid doesn't communicate at
+ * all, and it's markedly shorter at k=4 where crowding is worst (Phase 5's
+ * brief: 9 rows + 1 heading vs. 12 rows + 4 headings). Every strip at a
+ * given k iterates the identical candidateIntervals(k) list in the same
+ * order with fixed-height buttons, so "the same interval value sits at the
+ * same height across strips" falls out of plain flexbox for free — nothing
+ * here has to line the rows up by hand.
  */
 import * as CC from '../src/cycles.js';
 
@@ -26,28 +36,32 @@ export function mountDials(root, { onSetDial } = {}) {
   let candidates = [];
   let dialRefs = [];
 
-  /** Rebuild the k dial groups. Call before the first render() at that k. */
+  /** Rebuild the k dial strips. Call before the first render() at that k. */
   function setMode(k) {
     candidates = CC.candidateIntervals(k);
     root.innerHTML = '';
     dialRefs = [];
 
-    for (let index = 0; index < k; index += 1) {
-      const wrap = document.createElement('div');
-      wrap.className = 'dial';
-      wrap.dataset.dial = String(index);
-      wrap.style.setProperty('--dial-color', `var(--color-ring-${index})`);
+    const grid = document.createElement('div');
+    grid.className = 'dials-grid';
 
-      const heading = document.createElement('h2');
-      heading.className = 'dial__label';
-      heading.textContent = `Interval ${index + 1}`;
-      wrap.appendChild(heading);
+    for (let index = 0; index < k; index += 1) {
+      const col = document.createElement('div');
+      col.className = 'dial-col';
+      col.dataset.dial = String(index);
+      col.style.setProperty('--dial-color', `var(--color-ring-${index})`);
+
+      const header = document.createElement('div');
+      header.className = 'dial-col__header';
+      header.textContent = String(index + 1);
+      header.setAttribute('aria-hidden', 'true');
+      col.appendChild(header);
 
       const options = document.createElement('div');
-      options.className = 'dial__options';
+      options.className = 'dial-col__options';
       options.setAttribute('role', 'group');
       options.setAttribute('aria-label', `Interval ${index + 1} value`);
-      wrap.appendChild(options);
+      col.appendChild(options);
 
       const buttons = new Map();
       for (const value of candidates) {
@@ -62,9 +76,11 @@ export function mountDials(root, { onSetDial } = {}) {
         buttons.set(value, btn);
       }
 
-      root.appendChild(wrap);
+      grid.appendChild(col);
       dialRefs.push(buttons);
     }
+
+    root.appendChild(grid);
   }
 
   function render(state, meta = {}) {

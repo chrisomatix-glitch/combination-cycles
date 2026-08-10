@@ -12,6 +12,8 @@
     "test:ui": "node app/state.test.js",
     "test:reachability": "node app/reachability.test.js",
     "test:figure": "node app/figure.test.js",
+    "test:dials": "node app/dials.test.js",
+    "test:notation": "node app/notation.test.js",
     "catalogue": "cd src && node gen-catalogue.js"
   }
 }

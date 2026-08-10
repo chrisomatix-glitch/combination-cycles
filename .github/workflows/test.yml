@@ -32,6 +32,12 @@ jobs:
       - name: Run figure suite
         run: npm run test:figure
 
+      - name: Run dials suite
+        run: npm run test:dials
+
+      - name: Run notation suite
+        run: npm run test:notation
+
       - name: Check the catalogue matches the engine
         run: |
           npm run catalogue

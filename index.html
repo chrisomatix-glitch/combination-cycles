@@ -16,6 +16,13 @@
   rather than assuming it loaded, and degrades to silence if it didn't.
 -->
 <script src="https://cdn.jsdelivr.net/npm/tone@15.1.22/build/Tone.js"></script>
+<!--
+  The second external script the build constraints permit (SPEC.md §10):
+  VexFlow, same plain-<script>-tag-from-a-CDN, no-build-step pattern as
+  Tone.js above. Exposes a global Vex.Flow; app/notation.js checks for
+  window.Vex rather than assuming it loaded, same reasoning as audio.js.
+-->
+<script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
 </head>
 <body>
 <main class="app">
@@ -102,6 +109,21 @@
     </section>
   </div>
 
+  <details class="notation-wrap" open>
+    <summary class="notation-summary">Notation</summary>
+    <div class="notation-controls">
+      <label class="notation-toggle">
+        <input type="checkbox" id="notation-labels" checked>
+        Interval labels
+      </label>
+      <div class="figure-export">
+        <label><input type="checkbox" id="notation-export-mono"> Export monochrome</label>
+        <button type="button" class="btn" id="notation-download">Download SVG</button>
+      </div>
+    </div>
+    <div class="notation-holder" id="notation-holder" aria-label="Staff notation of the current cycle, following the register toggle."></div>
+  </details>
+
   <section class="readout" aria-live="polite">
     <div class="readout__id"></div>
     <div class="readout__name"></div>
@@ -131,6 +153,7 @@
   import { mountDials } from './app/dials.js';
   import { mountFigure, isReflectionSymmetric, buildStandaloneSvg } from './app/figure.js';
   import * as Audio from './app/audio.js';
+  import * as Notation from './app/notation.js';
 
   let catalogue = null;
   let registerMode = 'bounded'; // view-only: SPEC.md §4 says register carries no information
@@ -182,6 +205,7 @@
   });
   const dials = mountDials(document.getElementById('dials'), { onSetDial: setDialValue });
   const figure = mountFigure(document.getElementById('figure-holder'));
+  const notation = Notation.mountNotation(document.getElementById('notation-holder'));
 
   // --- Figure: colour toggle, info panel, SVG export ------------------------
   const figureColourToggle = document.getElementById('figure-colour-toggle');
@@ -226,6 +250,36 @@
     const a = document.createElement('a');
     a.href = url;
     a.download = `combination-cycle-${entry.id}.svg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // --- Notation: interval-label toggle and SVG export -----------------------
+  const notationLabelsCheckbox = document.getElementById('notation-labels');
+  const notationExportMonoCheckbox = document.getElementById('notation-export-mono');
+  const notationDownloadBtn = document.getElementById('notation-download');
+
+  notationLabelsCheckbox.addEventListener('change', () => {
+    notation.setShowIntervalLabels(notationLabelsCheckbox.checked);
+  });
+
+  notationDownloadBtn.addEventListener('click', () => {
+    const state = getState();
+    const entry = CC.identify(state.intervals, catalogue);
+    const svgText = Notation.buildStandaloneSvg(state.intervals, {
+      mode: registerMode,
+      transposition: state.transposition,
+      monochrome: notationExportMonoCheckbox.checked,
+      showIntervalLabels: notationLabelsCheckbox.checked,
+    });
+    if (!svgText) return; // VexFlow didn't load — nothing to export
+    const blob = new Blob([svgText], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `combination-cycle-${entry.id}-notation.svg`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -331,6 +385,7 @@
     circle.render(state, meta);
     dials.render(state, meta);
     figure.render(state);
+    notation.render(state, { registerMode });
     renderReadout(state);
     renderFigureInfo(state);
     updateRegisterWarning(state);
@@ -403,6 +458,7 @@
       b.setAttribute('aria-pressed', String(b === btn));
     });
     updateRegisterWarning(getState());
+    notation.render(getState(), { registerMode });
   });
 
   const initial = initState();
