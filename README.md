@@ -5,8 +5,16 @@ combination cycles** — twelve-note cycles built from a repeating pattern of tw
 or more alternating intervals, which traverse all twelve pitch classes exactly
 once and return to their starting note.
 
-This repository holds the theory engine. An interactive circle-of-fifths tool
-built on it is in development.
+This repository holds the theory engine, and the interactive circle-of-fifths
+tool built on it is live at <https://chrisjeffery.co.za/cycles/>.
+
+## The tool
+
+Rotatable rings for two-, three- and four-interval cycles, with bidirectional
+interval dials and the cycle drawn as a geometric figure on the circle of
+fifths. Staff notation in bounded or literal register, matching sampled piano
+playback note for note — literal shows the cycles as the multi-octave objects
+they are. SVG export and permalinks for every state.
 
 ---
 

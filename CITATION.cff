@@ -8,7 +8,7 @@ authors:
     orcid: "https://orcid.org/0000-0002-1587-6254"
     affiliation: "University of South Africa"
 repository-code: "https://github.com/chrisomatix-glitch/combination-cycles"
-url: "https://chrisjeffery.co.za"
+url: "https://chrisjeffery.co.za/cycles/"
 abstract: >-
   An engine for enumerating, cataloguing and realising symmetrical twelve-note
   combination cycles: cycles of two or more alternating intervals that traverse
@@ -17,7 +17,10 @@ abstract: >-
   2017 doctoral portfolio, where the term "combination cycle" is defined and the
   twelve-note cyclical forms are applied compositionally. It adds a catalogue
   and naming scheme, register placement, serial row forms, and a concordance
-  with the independent mathematical enumeration of Berliner et al. (2018).
+  with the independent mathematical enumeration of Berliner et al. (2018). An
+  interactive circle-of-fifths tool built on the engine lets the cycles be
+  rotated, inverted, played on a sampled piano and notated on a staff in
+  bounded or literal register, with SVG export and permalinks for every state.
 keywords:
   - music theory
   - interval cycles
@@ -26,8 +29,8 @@ keywords:
   - modes of limited transposition
   - twelve-tone
 license: MIT
-version: 0.1.0
-date-released: 2026-08-08
+version: 0.2.0
+date-released: 2026-08-10
 references:
   # --- The author's prior statement of the theory ---
   - type: thesis
