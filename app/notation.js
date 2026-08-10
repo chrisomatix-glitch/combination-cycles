@@ -53,15 +53,20 @@
  * stack of separate staves.
  *
  * Stem direction: StaveNote defaults to stem-up unconditionally unless
- * `autoStem: true` is passed — confirmed against VexFlow's own source,
- * where the constructor is literally `stemDirection ?? Stem.UP`. Passing
- * autoStem delegates to VexFlow's calculateOptimalStemDirection(), which
- * implements the standard rule (on/above the middle line, stem down; below
- * it, stem up) from the same keys/clef every note is already built from —
- * so it automatically follows the WRITTEN position post-bracket, with no
- * separate calculation needed here. stemDirectionFor() below is a pure
- * reimplementation of that identical rule, exported only so the test suite
- * can check it without a DOM to run real VexFlow in.
+ * `auto_stem: true` is passed — confirmed against VexFlow 4.2.2's own
+ * source (the pinned CDN version — its StaveNoteStruct is still snake_case,
+ * `auto_stem`/`stem_direction`; later VexFlow versions rename these to
+ * camelCase, and checking master instead of the pinned tag is exactly how
+ * this shipped once already: an unrecognised `autoStem` field is silently
+ * ignored, falling through to the constructor's literal `stem_direction ??
+ * Stem.UP` default). Passing auto_stem delegates to VexFlow's
+ * calculateOptimalStemDirection(), which implements the standard rule
+ * (on/above the middle line, stem down; below it, stem up) from the same
+ * keys/clef every note is already built from — so it automatically follows
+ * the WRITTEN position post-bracket, with no separate calculation needed
+ * here. stemDirectionFor() below is a pure reimplementation of that
+ * identical rule, exported only so the test suite can check it without a
+ * DOM to run real VexFlow in.
  *
  * Notehead colour is CC.groupOfSlot(slot, k) through the same four-colour
  * palette as the ring and the figure (RING_COLORS below is a literal copy of
@@ -279,14 +284,20 @@ function buildTickables(Flow, entries, iv, { showIntervalLabels, monochrome }) {
     let note;
     if (e.isRest) {
       note = new Flow.StaveNote({
-        keys: [REST_KEY[e.clef]], duration: 'qr', clef: e.clef, autoStem: true,
+        keys: [REST_KEY[e.clef]], duration: 'qr', clef: e.clef, auto_stem: true,
       });
     } else {
-      // autoStem delegates stem direction to VexFlow's own middle-line rule
-      // (see the module comment) — no stem_direction override here, since
-      // an explicit one would always win over the note's actual position.
+      // auto_stem delegates stem direction to VexFlow's own middle-line
+      // rule (see the module comment) — no stem_direction override here,
+      // since an explicit one would always win over the note's actual
+      // position. Snake_case, not autoStem: the pinned CDN build is
+      // VexFlow 4.2.2, whose StaveNoteStruct still uses auto_stem/
+      // stem_direction — later versions renamed these to camelCase, and
+      // silently ignoring an unrecognised autoStem field (falling back to
+      // its Stem.UP default) is exactly how this shipped stems-always-up
+      // the first time.
       note = new Flow.StaveNote({
-        keys: [e.vexKey], duration: 'q', clef: e.clef, autoStem: true,
+        keys: [e.vexKey], duration: 'q', clef: e.clef, auto_stem: true,
       });
       if (e.accidental) note.addModifier(new Flow.Accidental(e.accidental), 0);
       const color = monochrome ? MONO_COLOR : RING_COLORS[e.group % RING_COLORS.length];
