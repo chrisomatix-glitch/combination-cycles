@@ -35,6 +35,9 @@ jobs:
       - name: Run dials suite
         run: npm run test:dials
 
+      - name: Run register suite
+        run: npm run test:register
+
       - name: Run notation suite
         run: npm run test:notation
 

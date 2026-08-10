@@ -3,10 +3,16 @@
  * brief, acceptance criteria 3 and 5), for every catalogue entry at every
  * k in {2, 3, 4} and both register modes:
  *
- *   - the MIDI numbers notation draws are exactly CC.placeRegister(iv,
- *     {mode, transposition, closeCycle:true}) — the same call index.html
- *     makes for audio — so the staff and play-through agree note for note,
- *     not just by eye;
+ *   - the MIDI numbers notation draws are exactly registeredNotes(iv,
+ *     {mode, transposition}) — the same shared function audio.js's
+ *     play-through and click handling call — so the staff and play-through
+ *     agree note for note, not just by eye. This is deliberately NOT
+ *     compared against CC.placeRegister() directly: an earlier version of
+ *     this test did exactly that, which is precisely why it passed 944/944
+ *     while notation and audio actually disagreed on literal mode's
+ *     register for 115 of 118 cycles — CC.placeRegister() skips the Phase
+ *     3.1 re-centring registeredNotes() applies, so comparing against it
+ *     was comparing notation to the wrong ground truth;
  *   - a note is a rest if and only if Audio.isPlayable() says it's out of
  *     range, reusing audio's own rule rather than a second definition of
  *     "out of range" that could drift from it;
@@ -20,6 +26,7 @@
 import * as CC from '../src/cycles.js';
 import { isPlayable } from './audio.js';
 import { noteSequence } from './notation.js';
+import { registeredNotes } from './register.js';
 
 let pass = 0; let fail = 0;
 const results = [];
@@ -37,9 +44,9 @@ for (const k of [2, 3, 4]) {
       const entries = noteSequence(entry.intervals, { mode, transposition: 0 });
       checked += 1;
 
-      const expectedMidi = CC.placeRegister(entry.intervals, { mode, transposition: 0, closeCycle: true });
+      const expectedMidi = registeredNotes(entry.intervals, { mode, transposition: 0 });
       assert(
-        `${entry.id} (${mode}): notation MIDI matches placeRegister exactly`,
+        `${entry.id} (${mode}): notation MIDI matches registeredNotes (audio's own source) exactly`,
         JSON.stringify(entries.map((e) => e.midi)) === JSON.stringify(expectedMidi),
         `got ${JSON.stringify(entries.map((e) => e.midi))}, expected ${JSON.stringify(expectedMidi)}`,
       );

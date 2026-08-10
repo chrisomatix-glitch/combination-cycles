@@ -154,36 +154,18 @@
   import { mountFigure, isReflectionSymmetric, buildStandaloneSvg } from './app/figure.js';
   import * as Audio from './app/audio.js';
   import * as Notation from './app/notation.js';
+  import { registeredNotes } from './app/register.js';
 
   let catalogue = null;
   let registerMode = 'bounded'; // view-only: SPEC.md §4 says register carries no information
   let tempo = 120; // BPM-ish: notes per minute
-
-  /**
-   * The register-placed sequence for the current cycle, indices 0-11 lined up
-   * with circle slots and index 12 the closing return-to-start note (SPEC.md's
-   * Phase 3.1 brief). Bounded is placeRegister() unchanged. Literal anchors its
-   * first note at the centre and only climbs from there (never resetting), so
-   * a five-to-seven-octave cycle ends up almost entirely above the centre —
-   * re-centre the whole realisation by whole octaves on its own midpoint
-   * instead, which is the only shift that preserves the interval pattern.
-   */
-  function registeredNotes(state) {
-    const raw = CC.placeRegister(state.intervals, {
-      mode: registerMode, transposition: state.transposition, closeCycle: true,
-    });
-    if (registerMode !== 'literal') return raw;
-    const mid = (Math.max(...raw) + Math.min(...raw)) / 2;
-    const offset = Math.round((60 - mid) / 12) * 12;
-    return raw.map((n) => n + offset);
-  }
 
   const registerWarningEl = document.getElementById('register-warning');
 
   /** Surface cycles literal mode still can't fit, rather than silently mangling them. */
   function updateRegisterWarning(state) {
     if (registerMode !== 'literal') { registerWarningEl.hidden = true; return; }
-    const notes = registeredNotes(state);
+    const notes = registeredNotes(state.intervals, { mode: registerMode, transposition: state.transposition });
     const outCount = notes.filter((n) => !Audio.isPlayable(n)).length;
     if (outCount === 0) { registerWarningEl.hidden = true; return; }
     const span = Math.max(...notes) - Math.min(...notes);
@@ -199,7 +181,8 @@
     onNotePlay: (slot) => {
       // playMidi() itself skips notes outside the audible MIDI range, so the
       // highlight always fires even for a click that ends up silent.
-      Audio.playMidi(registeredNotes(getState())[slot]);
+      const state = getState();
+      Audio.playMidi(registeredNotes(state.intervals, { mode: registerMode, transposition: state.transposition })[slot]);
       circle.highlightSlot(slot);
     },
   });
@@ -432,7 +415,8 @@
       updatePlayButton();
       return;
     }
-    const notes = registeredNotes(getState());
+    const state = getState();
+    const notes = registeredNotes(state.intervals, { mode: registerMode, transposition: state.transposition });
     // playSequence() marks itself playing synchronously (before its own
     // first await), so isPlaying() is already true once this call returns —
     // update the button after starting it, not before.

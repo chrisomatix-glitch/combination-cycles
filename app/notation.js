@@ -11,12 +11,14 @@
  * window.Vex and degrades to a muted message rather than throwing.
  *
  * Thirteen notes, closing on the return to the starting pitch class — the
- * MIDI numbers come from CC.placeRegister(iv, {mode, transposition,
- * closeCycle:true}), the exact call index.html's registeredNotes() makes for
- * audio, so the staff and playback agree note-for-note by construction, not
- * by two independent implementations staying in sync by hand. "Out of
- * range" reuses Audio.isPlayable() for the same reason — a note the audio
- * silently skips is rendered here as a rest, not a fabricated pitch.
+ * MIDI numbers come from register.js's registeredNotes(), the same shared
+ * function audio.js's play-through and click handling call, so the staff
+ * and playback agree note-for-note by construction: there is exactly one
+ * place either view could get the register from, not two implementations
+ * that have to be kept in sync by hand (see register.js's own comment for
+ * the bug that shipped before this was true). "Out of range" reuses
+ * Audio.isPlayable() for the same reason — a note the audio silently skips
+ * is rendered here as a rest, not a fabricated pitch.
  *
  * Spelling is CC.spell(iv, {mode:'fixed'}) — the engine's conventional
  * circle-of-fifths spelling (one sharp, the rest flats), which is what makes
@@ -45,6 +47,7 @@
  */
 import * as CC from '../src/cycles.js';
 import { isPlayable } from './audio.js';
+import { registeredNotes } from './register.js';
 
 // Kept as literal constants, not read from CSS, for the same reason
 // figure.js's RING_COLORS is: the exported standalone SVG has no stylesheet
@@ -94,9 +97,7 @@ export function noteSequence(iv, { mode = 'bounded', transposition = 0 } = {}) {
   const k = iv.length;
   const names12 = CC.spell(iv, { mode: 'fixed', transposition });
   const names = [...names12, names12[0]];
-  const midi = CC.placeRegister(iv, {
-    mode, transposition, closeCycle: true,
-  });
+  const midi = registeredNotes(iv, { mode, transposition });
   const singleClef = mode === 'literal' ? null : chooseSingleClef(midi);
 
   return names.map((name, i) => {
