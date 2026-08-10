@@ -130,6 +130,93 @@
     <div class="readout__berliner"></div>
     <span class="readout__badge" hidden></span>
   </section>
+
+  <details class="about" id="about">
+    <summary class="about__summary">About combination cycles</summary>
+    <div class="about__prose">
+      <h2>What a combination cycle is</h2>
+      <p>
+        The circle of fifths and the chromatic scale are the two twelve-note
+        cycles that can be built from a single repeating interval. They work
+        because adjacent notes alternate between the two transpositions of
+        the whole-tone scale. Other intervals can also be repeated, but do
+        not cycle through all twelve notes. Collectively, these repeated
+        patterns are called interval cycles. A combination cycle is akin to
+        an interval cycle, but instead of alternating a single interval
+        until the original or starting pitch recurs, two or more intervals
+        are cycled through in a fixed order, again until the starting pitch
+        recurs. There are many combination cycles, varying from two to six
+        intervals in length, which cycle through any number of pitches
+        before returning to the starting pitch. My own use of these cycles,
+        however, is limited to those that cycle through all twelve pitches
+        without repeating, and return to the original pitch on the 13th
+        step—in other words, like a traditional serial 12-note row, but
+        always maintaining the fixed order of intervals. This subset
+        consists of a finite number of possibilities, and can be constructed
+        out of two, three or four intervals. Six intervals is also possible,
+        but provides far more possibilities and weakens the sense of order
+        found in the two- to four-interval cycles. This sense of order is
+        caused by the repetition of the same interval patterns six, four or
+        three times respectively. These cycles are essentially multi-octave
+        modes of limited transposition — they have all the features of
+        Messiaen's modes of limited transposition but are not confined to a
+        single octave.
+      </p>
+
+      <h2>Provenance</h2>
+      <p>
+        The term combination cycle was coined by Lambert (1990). The
+        specific use of combination cycles as twelve-note cyclical forms is,
+        to my knowledge, first set out in my 2017 doctoral portfolio
+        (Jeffery 2017), <em>Portfolio of Original Compositions</em> (DMus,
+        South African College of Music, University of Cape Town), following
+        an earlier presentation to the South African Society for Research in
+        Music in 2012, and the North-South-South Conference in the same
+        year. The portfolio defines the cycles, derives the whole-tone
+        constraint governing two-interval forms, and traces their use
+        across four works — from isolated colouristic passages in
+        <em>Movement for Viola and Piano</em> (2010) through to
+        <em>De Voortrekkers</em> (2016), an orchestral film score generated
+        entirely from seven combination cycles deployed leitmotivically, one
+        per character or character group. Combination cycles in the broader
+        sense are not new — the octatonic scale is one, and Charles Ives,
+        Béla Bartók, Witold Lutosławski, Benjamin Britten and Thomas Adès
+        all used alternating-interval patterns, though not (with one known
+        exception in Bartók<sup><a href="#fn1" id="fnref1">1</a></sup>) the
+        twelve-note cyclical forms. The mathematics of the twelve-note forms
+        has been set out by Berliner et al. (2018), who give necessary and
+        sufficient conditions and complete enumeration tables.
+      </p>
+      <ol class="about__footnotes">
+        <li id="fn1">
+          Concerto for Orchestra, 1st movt, bars 117–121, 1st and 2nd violin
+          parts.
+          <a href="#fnref1" aria-label="Back to reference in the text">↩</a>
+        </li>
+      </ol>
+    </div>
+  </details>
+
+  <section class="references" aria-label="References">
+    <h2>References</h2>
+    <p>
+      Lambert, J. P. (1990). Interval Cycles as Compositional Resources in
+      the Music of Charles Ives. <em>Music Theory Spectrum</em>, 12(1),
+      43–82.
+      <a href="https://doi.org/10.2307/746146" target="_blank" rel="noopener">https://doi.org/10.2307/746146</a>
+    </p>
+    <p>
+      Jeffery, C. (2017). <em>Portfolio of Original Compositions</em> [DMus
+      portfolio]. South African College of Music, University of Cape Town.
+      <a href="http://hdl.handle.net/11427/27459" target="_blank" rel="noopener">http://hdl.handle.net/11427/27459</a>
+    </p>
+    <p>
+      Berliner, A. H., Castro, D., Merritt, J., &amp; Southard, C. (2018).
+      Expanded interval cycles. <em>Journal of Mathematics and Music</em>,
+      12(1), 21–33.
+      <a href="https://doi.org/10.1080/17459737.2018.1453950" target="_blank" rel="noopener">https://doi.org/10.1080/17459737.2018.1453950</a>
+    </p>
+  </section>
 </main>
 
 <footer class="app-footer">
@@ -462,6 +549,18 @@
     applyMode(state.intervals.length);
     renderAll(state, { type: 'init' });
   });
+
+  // --- #about deep link ------------------------------------------------------
+  // <details> doesn't open itself for a fragment navigation to something
+  // inside it, so a plain #about link would scroll to a collapsed section.
+  function openAboutIfLinked() {
+    if (window.location.hash !== '#about') return;
+    const about = document.getElementById('about');
+    about.open = true;
+    about.scrollIntoView();
+  }
+  openAboutIfLinked();
+  window.addEventListener('hashchange', openAboutIfLinked);
 </script>
 </body>
 </html>

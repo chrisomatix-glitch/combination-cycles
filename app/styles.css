@@ -216,6 +216,9 @@ body {
 .mode-btn:focus-visible,
 .toggle-btn:focus-visible,
 .tempo-control input:focus-visible,
+.about__summary:focus-visible,
+.about__prose a:focus-visible,
+.references a:focus-visible,
 .circle-holder :focus-visible {
   outline: var(--focus-ring);
   outline-offset: 2px;
@@ -678,6 +681,100 @@ body {
 
 .readout__badge[hidden] {
   display: none;
+}
+
+/* --- About -------------------------------------------------------------
+ * Collapsed by default — the explanation is background reading, not load-
+ * bearing. The References directly below (a plain <section>, not inside the
+ * <details>) stay always visible, since they do provenance work of their
+ * own and shouldn't sit behind a click.
+ */
+
+.about {
+  width: 100%;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Styled like the pill controls elsewhere (.btn, .toggle-btn), not like a
+   heading, so the disclosure reads as obviously clickable. The default
+   marker triangle is replaced with a rotating one so open/closed state is
+   still visible without relying on colour alone. */
+.about__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: var(--touch-target);
+  padding: 0.4rem 0.9rem;
+  border: 2px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.about__summary::-webkit-details-marker {
+  display: none;
+}
+
+.about__summary::before {
+  content: '▸';
+  font-size: 0.75em;
+  transition: transform 150ms ease;
+}
+
+.about[open] .about__summary::before {
+  transform: rotate(90deg);
+}
+
+/* A readable measure (~65-75 characters), centred like the rest of the
+   page — text itself stays left-aligned, since centring long prose lines
+   hurts readability rather than helping it. */
+.about__prose,
+.references {
+  max-width: 70ch;
+  margin: 0.75rem auto 0;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.about__prose h2,
+.references h2 {
+  font-size: 1rem;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.about__prose h2:first-child,
+.references h2 {
+  margin-top: 0;
+}
+
+.about__prose p,
+.references p {
+  margin: 0 0 0.85rem;
+}
+
+.about__prose a,
+.references a {
+  color: inherit;
+  overflow-wrap: break-word;
+}
+
+.about__footnotes {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  padding-left: 1.2rem;
+  margin: 0;
+}
+
+.references {
+  margin-top: 1rem;
 }
 
 /* --- Footer ---------------------------------------------------------------
