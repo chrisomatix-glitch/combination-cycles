@@ -1,3 +1,4 @@
+---
 deployment:
   tasks:
     # Copies only what a browser needs. The test suites, docs/, data/, the
