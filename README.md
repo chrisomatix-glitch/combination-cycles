@@ -15,23 +15,26 @@ built on it is in development.
 The circle of fifths and the chromatic scale are the two twelve-note cycles
 that can be built from a *single* repeating interval. They work because
 adjacent notes alternate between the two transpositions of the whole-tone
-scale.
+scale. Other intervals can also be repeated, but do not cycle through all
+twelve notes. Collectively, these repeated patterns are called interval cycles.
 
-Shift one whole-tone hexachord against the other and new cycles appear, built
-from two alternating intervals — m2–M6 and m3–P5, along with their inversions.
-The same logic extends: three intervals arranged symmetrically around the
-diminished quartad, four around the augmented triad, six around the tritone.
-
-The twelve notes always fall into *k* groups, and those groups are exactly the
-residue classes mod *k* — whole-tone hexachords at *k* = 2, diminished quartads
-at 3, augmented triads at 4, tritone dyads at 6. An interval congruent to 0
-(mod *k*) is barred, since it would step to a note in the same group. This is
-why the minor 3rd and augmented 4th cannot appear in three-interval cycles, and
-the major 3rd and minor 6th cannot appear in four-interval ones.
+A combination cycle is akin to an interval cycle, but instead of alternating
+a single interval until the original or starting pitch recurs, two or more intervals
+are cycled through in a fixed order, again until the starting pitch recurs. There are 
+many combination cycles, varying from two to six intervals in length, which cycle
+through any number of pitches before returning to the starting pitch. My own use of
+these cycles, however, is limited to those that cycle through all twelve pitches without
+repeating, and return to the original pitch on the 13th step—in other words, like a
+traditional serial 12-note row, but always maintaining the fixed order of intervals.
+This subset consists of a finite number of possibilities, and can be constructed out
+of two, three or four intervals. Six intervals is also possible, but provides far more
+possibilities and weakens the sense of order found in the two- to four-interval cycles.
+This sense of order is caused by the repetition of the same interval class patterns
+six, four or three times respectively.
 
 These cycles are essentially **multi-octave modes of limited transposition** —
-they have all the features of Messiaen's MoLTs but are not confined to a single
-octave.
+they have all the features of Messiaen's modes of limited transpositoin but are not
+confined to a single octave.
 
 ## Counts
 
@@ -88,10 +91,12 @@ Any change to `src/cycles.js` must keep it green.
 
 ## Provenance
 
-The term *combination cycle*, and the twelve-note cyclical forms it names, are
-set out in my 2017 doctoral portfolio, *Portfolio of Original Compositions*
+The term *combination cycle* was coined by Lambert (1990). The specific use of combination
+cycles as twelve-note cyclical forms, are to my knowledge first
+set out in my 2017 doctoral portfolio (Jeffery 2017), *Portfolio of Original Compositions*
 (DMus, South African College of Music, University of Cape Town), following an
-earlier presentation to the South African Society for Research in Music in 2012.
+earlier presentation to the South African Society for Research in Music in 2012, and the
+North-South-South Conference in the same year.
 The portfolio defines the cycles, derives the whole-tone constraint governing
 two-interval forms, and traces their use across four works — from isolated
 colouristic passages in *Movement for Viola and Piano* (2010) through to
@@ -100,15 +105,11 @@ combination cycles deployed leitmotivically, one per character or character
 group.
 
 Combination cycles in the broader sense are not new — the octatonic scale is
-one, and Ives, Lutoslawski and Ades all used alternating-interval patterns,
-though not the twelve-note cyclical forms. The mathematics of the twelve-note
-forms was developed independently, and far more rigorously, by Berliner, Castro,
-Merritt and Southard in 2018, who give necessary and sufficient conditions and
-complete enumeration tables. Their treatment and mine are convergent discoveries
-with different emphases: theirs mathematical and general, mine compositional and
-analytical. Their paper does not address inversional distinctions, the
-relationship to Messiaen's modes of limited transposition, the serial
-implications, or compositional application.
+one, and Charles Ives, Bela Bartok, Witold Lutoslawski, Benjamin Britten and
+Thomas Ades all used alternating-interval patterns,
+though not (with one known exception in Bartok) the twelve-note cyclical forms.
+The mathematics of the twelve-note forms was developed more rigorously by Berliner et al (2018),
+who give necessary and sufficient conditions and complete enumeration tables.
 
 ### The portfolio's cycles, catalogued
 
@@ -134,7 +135,10 @@ Note that Retief's cycle and the Portuguese one are 3-8 and 3-8I — the same
 cycle and its inversion, assigned to opposing parties in the narrative.
 
 ## References
-> Jeffery, C. (2017). *Portfolio of Original Compositions* [DMus portfolio].
+> Lambert, P. (1990). Interval Cycles as Compositional Resources in the Music
+> of Charles Ives. *Music Theory Spectrum*, 12(1), 43–82. https://doi.org/10.2307/746146
+
+>Jeffery, C. (2017). *Portfolio of Original Compositions* [DMus portfolio].
 > South African College of Music, University of Cape Town.
 > <http://hdl.handle.net/11427/27459>
 
