@@ -10,7 +10,6 @@ deployment:
     - /bin/mkdir -p $DEPLOYPATH/app
     - /bin/mkdir -p $DEPLOYPATH/src
     - /bin/cp index.html $DEPLOYPATH/
-    - /bin/cp deploy/robots.txt $DEPLOYPATH/
     - /bin/cp src/cycles.js $DEPLOYPATH/src/
     - /bin/cp app/audio.js app/circle.js app/dials.js app/figure.js app/state.js app/styles.css $DEPLOYPATH/app/
     # Remove any test files a previous deploy may have left behind.
