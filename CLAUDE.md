@@ -2,6 +2,16 @@
 
 Project-specific conventions for Claude Code when working in this repo.
 
+## Shell environment
+
+This project runs on Windows, under Git Bash. Prefer bash syntax for shell
+commands, and avoid constructs that PowerShell mis-parses — `@{u}` (collides
+with PowerShell hash-literal syntax), here-strings (`@'...'@`), and long
+inline scripts generally. Several commands have already failed on this. If a
+command needs a multi-line payload (e.g. a commit message), write it to a
+temp file and reference the file (e.g. `git commit -F <file>`) rather than
+inlining it.
+
 ## No inline `node -e` scripts
 
 Don't verify things with inline `node -e "..."` (or PowerShell equivalents)
