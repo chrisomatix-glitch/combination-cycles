@@ -13,8 +13,9 @@
  * no new serialisation (SPEC.md's Phase 2 brief).
  */
 import * as CC from '../src/cycles.js';
+import { peekCatalogue } from './catalogueCache.js';
 
-export const MODES = [2, 3, 4];
+export const MODES = [2, 3, 4, 6];
 const TRANSPOSITION = 0;
 
 let state = null;
@@ -166,11 +167,18 @@ export function swapRings(m1, m2) {
  * excluded by default — otherwise this keeps landing on the chromatic scale
  * or the circle of fifths, which is a much smaller and less interesting set
  * than it looks (SPEC.md's Phase 3.1 brief). The genuine-cycle count is never
- * zero at any k (8/60/312 — SPEC.md §2), so the pool is never empty.
+ * zero at any k (8/60/312/3768 — SPEC.md §2), so the pool is never empty.
+ *
+ * Uses catalogueCache's memoised CC.allCycles(k) when it's already been
+ * built (always true at k = 6 by the time this can be called — the mode
+ * switch awaits ensureCatalogue() first) and falls back to calling the
+ * engine directly otherwise, so this stays correct even if something calls
+ * randomise() for a k that was never explicitly warmed.
  */
 export function randomise({ includeDegenerate = false } = {}) {
   const k = state.intervals.length;
-  const pool = CC.allCycles(k).filter((iv) => includeDegenerate || !CC.isDegenerate(iv));
+  const all = peekCatalogue(k)?.allCycles || CC.allCycles(k);
+  const pool = all.filter((iv) => includeDegenerate || !CC.isDegenerate(iv));
   const choice = pool[Math.floor(Math.random() * pool.length)];
   state = { ...state, intervals: choice };
   emit({ type: 'randomise' });

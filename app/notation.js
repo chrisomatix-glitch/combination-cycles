@@ -86,12 +86,13 @@ import { registeredNotes } from './register.js';
 // figure.js's RING_COLORS is: the exported standalone SVG has no stylesheet
 // to resolve custom properties from. Must be kept in sync with styles.css
 // (--color-ring-N) and figure.js by hand if that palette ever changes.
-const RING_COLORS = ['#0072b2', '#d55e00', '#009e73', '#cc79a7'];
+const RING_COLORS = ['#0072b2', '#d55e00', '#009e73', '#cc79a7', '#e69f00', '#56b4e9'];
 const MONO_COLOR = RING_COLORS[0];
 
 // circle.js's RING_SHAPES, in glyph form: ring 0 is round, then diamond,
-// triangle, pentagon — the redundant non-colour cue for notehead group.
-const SHAPE_GLYPHS = ['●', '◆', '▲', '⬟'];
+// triangle, pentagon, hexagon, star (k = 6 only) — the redundant non-colour
+// cue for notehead group.
+const SHAPE_GLYPHS = ['●', '◆', '▲', '⬟', '⬢', '✦'];
 
 const ACCIDENTAL_ASCII = { '♯': '#', '♭': 'b' };
 const REST_KEY = { treble: 'b/4', bass: 'd/3' };

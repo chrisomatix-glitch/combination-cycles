@@ -1,12 +1,14 @@
 /**
  * Regression test for the dial-strip space budget Phase 5's brief published
  * as a design invariant: candidateIntervals(k) — the list every dial strip
- * renders one row per value of, in order — has exactly 6/8/9 entries at
- * k=2/3/4. That's what makes the vertical-strip layout markedly shorter at
+ * renders one row per value of, in order — has exactly 6/8/9/10 entries at
+ * k=2/3/4/6. That's what makes the vertical-strip layout markedly shorter at
  * k=4 (9 rows vs. the old grid's 12) and narrower at k=2/3, and it's a fact
  * about the engine's group structure (candidateIntervals excludes multiples
  * of k), not an arbitrary UI choice — worth pinning down so a future engine
- * change can't silently blow the layout's space budget.
+ * change can't silently blow the layout's space budget. k=6 only ever
+ * excludes the tritone itself (the only value ≡ 0 mod 6 in range), which is
+ * why it has more candidates than k=4 despite having more rings, not fewer.
  *
  * Run: node app/dials.test.js
  */
@@ -20,16 +22,18 @@ function check(name, actual, expected) {
   results.push({ ok, name, detail: ok ? '' : `got ${actual}, expected ${expected}` });
 }
 
-const EXPECTED_ROWS = { 2: 6, 3: 8, 4: 9 };
+const EXPECTED_ROWS = {
+  2: 6, 3: 8, 4: 9, 6: 10,
+};
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   check(`k=${k}: candidateIntervals row count`, CC.candidateIntervals(k).length, EXPECTED_ROWS[k]);
 }
 
 // Every dial strip at a given k renders the identical candidates list in the
 // identical order — the fact that makes "same value, same height across
 // strips" true without any manual row-matching in dials.js.
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const candidates = CC.candidateIntervals(k);
   const sorted = [...candidates].sort((a, b) => a - b);
   check(`k=${k}: candidateIntervals is already in ascending order`, JSON.stringify(candidates), JSON.stringify(sorted));

@@ -49,7 +49,7 @@ function assert(name, cond, detail = '') {
 
 let checked = 0;
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const catalogue = CC.buildCatalogue(k);
   for (const entry of catalogue) {
     for (const mode of ['bounded', 'literal']) {
@@ -160,7 +160,7 @@ assert('D3 in bass clef: stem down', stemDirectionFor(staffLine('d', 3, 'bass'))
   let overCount = 0;
   let overButNotDeepest = 0;
   let total = 0;
-  for (const k of [2, 3, 4]) {
+  for (const k of [2, 3, 4, 6]) {
     for (const entry of CC.buildCatalogue(k)) {
       const entries = noteSequence(entry.intervals, { mode: 'literal', transposition: 0 });
       for (const e of entries) {

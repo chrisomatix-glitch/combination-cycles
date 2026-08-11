@@ -39,12 +39,16 @@ const ROTATE_MS = 280;
 const SETTLE_MS = 180;
 
 // Ring radii by k, innermost (locked, ring 0) first. Tuned by hand so k = 2
-// matches Phase 1 exactly, and k = 3/4 keep even gaps as more rings have to
-// share the same drawing.
+// matches Phase 1 exactly, and k = 3/4/6 keep even gaps as more rings have to
+// share the same drawing. k = 6's six rings never collide despite the
+// tighter radial spacing: each ring occupies a disjoint set of the twelve
+// fixed 30-degree slots (groupOfSlot), so same-radius crowding is the only
+// risk this table has to manage, not same-angle crowding between rings.
 const RADII = {
   2: [86, 124],
   3: [64, 96, 128],
   4: [52, 78, 104, 130],
+  6: [40, 58, 76, 94, 112, 130],
 };
 
 // Colour is keyed by ring INDEX, not by which pitch classes currently sit in
@@ -55,11 +59,15 @@ const RADII = {
 
 // Each ring also gets a distinct silhouette — the redundant non-colour cue
 // SPEC.md §5 requires, since journals print greyscale. Ring 0 is a circle;
-// the rest are regular polygons of increasing side count.
+// the rest are regular polygons of increasing side count. polygonPoints()
+// below is generic in side count, so k = 6's two extra rings (hexagon,
+// heptagon) need no new drawing code, only two more table entries.
 const RING_SHAPES = {
   1: { sides: 4, rotate: -90 }, // diamond
   2: { sides: 3, rotate: -90 }, // triangle
   3: { sides: 5, rotate: -90 }, // pentagon
+  4: { sides: 6, rotate: -90 }, // hexagon
+  5: { sides: 7, rotate: -90 }, // heptagon
 };
 
 const svgEl = (tag, attrs = {}) => {

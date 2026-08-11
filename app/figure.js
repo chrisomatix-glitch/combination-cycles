@@ -96,8 +96,9 @@ const DOT_R = 3.5;
 // standalone file with no external stylesheet to resolve them from — see
 // buildStandaloneSvg. Must be kept in sync with styles.css by hand if that
 // palette ever changes; it's the one piece of colour data duplicated outside
-// CSS in this app.
-const RING_COLORS = ['#0072b2', '#d55e00', '#009e73', '#cc79a7'];
+// CSS in this app. Six entries covers every k up to 6; only the first k are
+// ever indexed for a given cycle.
+const RING_COLORS = ['#0072b2', '#d55e00', '#009e73', '#cc79a7', '#e69f00', '#56b4e9'];
 const MONO_COLOR = RING_COLORS[0]; // "the slides use plain blue" — SPEC.md's Phase 4 brief
 
 const svgEl = (tag, attrs = {}) => {

@@ -2,11 +2,11 @@
  * Reachability test (SPEC.md's Phase 2 acceptance criterion 1, carried
  * forward by Phase 3's criterion 2): proves against the engine, not by hand,
  * that rotation + invert + pairwise ring swaps from the circle-of-fifths
- * position reach every ordered form — 12 at k = 2, 64 at k = 3, 324 at k = 4
- * — and that permalinks round-trip at every k. Pairwise swaps are sufficient
- * rather than needing a full permutation picker because transpositions
- * generate the whole symmetric group; this test is the proof, not just an
- * assertion of it.
+ * position reach every ordered form — 12 at k = 2, 64 at k = 3, 324 at k = 4,
+ * 3,840 at k = 6 — and that permalinks round-trip at every k. Pairwise swaps
+ * are sufficient rather than needing a full permutation picker because
+ * transpositions generate the whole symmetric group; this test is the proof,
+ * not just an assertion of it.
  *
  * Phase 3 replaced the interface's "reverse direction" control (reverseDirection,
  * the serial retrograde) with "invert" (invert, the serial inversion) — a
@@ -86,9 +86,11 @@ function reachableForms(k) {
   return out;
 }
 
-const EXPECTED = { 2: 12, 3: 64, 4: 324 };
+const EXPECTED = {
+  2: 12, 3: 64, 4: 324, 6: 3840,
+};
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const reachable = reachableForms(k);
   const all = new Set(CC.allCycles(k).map((iv) => iv.join(',')));
   check(`k=${k}: reachable-form count`, reachable.size, EXPECTED[k]);
@@ -101,7 +103,7 @@ for (const k of [2, 3, 4]) {
 
 // --- Permalink round-trip at every k (acceptance criterion 5) --------------
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   for (const iv of CC.allCycles(k)) {
     for (const t of [0, 5, 11]) {
       const str = CC.serialise({ intervals: iv, transposition: t });

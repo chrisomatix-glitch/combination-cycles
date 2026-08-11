@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Combination Cycles — the circle-of-fifths tool</title>
-<meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles, with two, three or four alternating intervals.">
+<meta name="description" content="An interactive circle of fifths for exploring symmetrical twelve-note combination cycles, with two, three, four or six alternating intervals.">
 <!-- Pre-launch: keep the unfinished tool out of search results. Remove this tag when the tool goes live. -->
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="app/styles.css">
@@ -32,6 +32,13 @@
   </header>
 
   <div class="mode-select" role="group" aria-label="Number of intervals" id="mode-select"></div>
+  <p class="mode-loading" id="mode-loading" aria-live="polite" hidden>Building the six-interval catalogue&hellip;</p>
+  <p class="six-interval-note" id="six-interval-note" hidden>
+    Six-interval cycles are far more numerous — 3,840 forms against 324 —
+    and their symmetry is correspondingly weaker: a pattern of six notes
+    repeated twice, closer to a serial row than to the strongly symmetrical
+    two-, three- and four-interval forms.
+  </p>
 
   <div class="layout">
     <section class="dials" id="dials" aria-label="Interval dials"></section>
@@ -242,6 +249,7 @@
   import * as Audio from './app/audio.js';
   import * as Notation from './app/notation.js';
   import { registeredNotes } from './app/register.js';
+  import { ensureCatalogue, peekCatalogue } from './app/catalogueCache.js';
 
   let catalogue = null;
   let registerMode = 'bounded'; // view-only: SPEC.md §4 says register carries no information
@@ -358,6 +366,19 @@
 
   // --- Mode selector -------------------------------------------------------
   const modeSelect = document.getElementById('mode-select');
+  const modeLoadingEl = document.getElementById('mode-loading');
+  const sixIntervalNoteEl = document.getElementById('six-interval-note');
+
+  // Only k = 6 is slow enough for this to ever show (app/catalogueCache.js
+  // only fires onLoading around an actual build, never a cache hit), but the
+  // gating is generic across every k rather than special-cased to 6 — the
+  // same reasoning SPEC.md gives for the engine itself: one algorithm, not a
+  // branch per k.
+  function setModeLoading(loading) {
+    modeLoadingEl.hidden = !loading;
+    modeSelect.querySelectorAll('.mode-btn').forEach((btn) => { btn.disabled = loading; });
+  }
+
   for (const k of MODES) {
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -365,7 +386,10 @@
     btn.dataset.k = String(k);
     btn.textContent = `${k} intervals`;
     btn.setAttribute('aria-pressed', 'false');
-    btn.addEventListener('click', () => setMode(k));
+    btn.addEventListener('click', async () => {
+      await ensureCatalogue(k, { onLoading: setModeLoading });
+      setMode(k);
+    });
     modeSelect.appendChild(btn);
   }
 
@@ -462,9 +486,14 @@
   }
 
   // A mode switch changes how many rings and dials there are, so it rebuilds
-  // structure before the next render() rather than just redrawing.
+  // structure before the next render() rather than just redrawing. Reads the
+  // catalogue from catalogueCache rather than calling CC.buildCatalogue(k)
+  // itself — every caller of applyMode() (initial load, the mode buttons,
+  // popstate) awaits ensureCatalogue(k) first, so the cache entry always
+  // exists by the time this runs; falling back to a direct call would defeat
+  // the whole point of the lazy build at k = 6 by re-running it synchronously.
   function applyMode(k) {
-    catalogue = CC.buildCatalogue(k);
+    catalogue = peekCatalogue(k).catalogue;
     circle.setMode(k);
     dials.setMode(k);
     buildRingControls(k);
@@ -473,6 +502,7 @@
     document.querySelectorAll('.mode-btn').forEach((btn) => {
       btn.setAttribute('aria-pressed', String(Number(btn.dataset.k) === k));
     });
+    sixIntervalNoteEl.hidden = k !== 6;
   }
 
   // --- Audio controls: register toggle and play-through --------------------
@@ -533,6 +563,11 @@
   });
 
   const initial = initState();
+  // Top-level await: supported natively by <script type="module">, no build
+  // step needed (SPEC.md §10). A permalink can land directly on k = 6, so
+  // the very first paint has to wait on the same lazy build the mode button
+  // does, not just mode switches made after the page has already loaded.
+  await ensureCatalogue(initial.intervals.length, { onLoading: setModeLoading });
   applyMode(initial.intervals.length);
   renderAll(initial, { type: 'init' });
 
@@ -544,7 +579,16 @@
   document.getElementById('invert-direction').addEventListener('click', () => invert());
   document.getElementById('randomise').addEventListener('click', () => randomise());
 
-  window.addEventListener('popstate', () => {
+  window.addEventListener('popstate', async () => {
+    // Peek the target k from the URL and warm its catalogue before touching
+    // state — reloadFromLocation() emits synchronously, and the subscribe
+    // listener below renders against whatever `catalogue` currently holds,
+    // so a k = 6 permalink reached via back/forward needs the cache entry to
+    // already exist by the time that fires, same as the initial load above.
+    const raw = window.location.search || window.location.hash;
+    const parsed = raw ? CC.parse(raw) : null;
+    const k = parsed && MODES.includes(parsed.intervals.length) ? parsed.intervals.length : 2;
+    await ensureCatalogue(k, { onLoading: setModeLoading });
     const state = reloadFromLocation();
     applyMode(state.intervals.length);
     renderAll(state, { type: 'init' });

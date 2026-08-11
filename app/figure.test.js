@@ -6,12 +6,13 @@
  *   - the circle-of-fifths figure — the closed loop of twelve chords a cycle
  *     draws on a fixed circle-of-fifths layout — is shared by exactly two of
  *     the ordered forms at every k, giving exactly half as many distinct
- *     figures: 6 at k=2, 32 at k=3, 162 at k=4, and the other form sharing a
- *     figure is always the one already recorded as retrogradeOf on the
- *     catalogue entry — that's the fact the interface surfaces as "this
- *     figure is also drawn by ...";
+ *     figures: 6 at k=2, 32 at k=3, 162 at k=4, 1920 at k=6, and the other
+ *     form sharing a figure is always the one already recorded as
+ *     retrogradeOf on the catalogue entry — that's the fact the interface
+ *     surfaces as "this figure is also drawn by ...";
  *   - inverting a cycle draws the identical figure — reflection-symmetric —
- *     for exactly 4 of 12 forms at k=2, 16 of 64 at k=3, 12 of 324 at k=4.
+ *     for exactly 4 of 12 forms at k=2, 16 of 64 at k=3, 12 of 324 at k=4,
+ *     64 of 3840 at k=6.
  *
  * Run: node app/figure.test.js
  */
@@ -32,10 +33,14 @@ function assert(name, cond, detail = '') {
   results.push({ ok: !!cond, name, detail });
 }
 
-const EXPECTED_FIGURES = { 2: 6, 3: 32, 4: 162 };
-const EXPECTED_SYMMETRIC = { 2: 4, 3: 16, 4: 12 };
+const EXPECTED_FIGURES = {
+  2: 6, 3: 32, 4: 162, 6: 1920,
+};
+const EXPECTED_SYMMETRIC = {
+  2: 4, 3: 16, 4: 12, 6: 64,
+};
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const all = CC.allCycles(k);
   const cat = CC.buildCatalogue(k);
 

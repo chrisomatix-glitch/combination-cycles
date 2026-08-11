@@ -1,7 +1,7 @@
 /**
  * Regression test: a clockwise rotate request must always produce a
  * clockwise (positive) visual displacement on screen — on every movable
- * ring, at every k in {2, 3, 4}, in both traversal directions — and
+ * ring, at every k in {2, 3, 4, 6}, in both traversal directions — and
  * vice versa for anticlockwise (SPEC.md's Phase 2 acceptance criterion 4).
  *
  * Background: rotateGroup's `steps` is a step count in interval-sequence
@@ -14,6 +14,15 @@
  * generalises the guard from k = 2's single movable ring to every movable
  * ring at every k, since the same assumption could just as easily have crept
  * back in while adding the other rings.
+ *
+ * k = 6 has no "opposite direction" to check: its rings hold two notes each
+ * (groupPositions(6) = 2), so rotating one is a 180-degree flip with only one
+ * other position to land on — pressing the left or right arrow key reaches
+ * the identical state either way, and mod(x+6,12) === mod(x-6,12) makes that
+ * true in rotateGroup itself, not just an artefact of this test. The
+ * clockwise-vs-anticlockwise assertion pair below only applies where there
+ * are more than two positions to distinguish a direction between; k = 6 gets
+ * its own pair of assertions for the flip instead (see `directional` below).
  *
  * Run: node app/state.test.js
  */
@@ -30,10 +39,11 @@ function assert(name, cond, detail = '') {
 const rawSigns = new Set();
 let statesChecked = 0;
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const base = Array(k).fill(7); // the circle-of-fifths position, degenerate by design
   const positions = 12 / k;
   const stepDeg = 30 * k;
+  const directional = positions > 2; // false only at k=6 — see the module comment
 
   for (const reversed of [false, true]) {
     const start = reversed ? CC.reverseDirection(base) : base;
@@ -55,19 +65,32 @@ for (const k of [2, 3, 4]) {
           `got ${cwDeg}deg`,
         );
 
-        const ccwSteps = engineStepsFor(iv, m, -1);
-        const ccwDeg = visualDegrees(iv, m, ccwSteps);
-        assert(
-          `k=${k} ring ${m} (${tag}): anticlockwise press is visually anticlockwise from [${iv}]`,
-          ccwDeg < 0,
-          `got ${ccwDeg}deg`,
-        );
-
         assert(
           `k=${k} ring ${m} (${tag}): a single step is a full ${stepDeg}deg from [${iv}]`,
           Math.abs(cwDeg) === stepDeg,
           `got ${cwDeg}deg`,
         );
+
+        const ccwSteps = engineStepsFor(iv, m, -1);
+        if (directional) {
+          const ccwDeg = visualDegrees(iv, m, ccwSteps);
+          assert(
+            `k=${k} ring ${m} (${tag}): anticlockwise press is visually anticlockwise from [${iv}]`,
+            ccwDeg < 0,
+            `got ${ccwDeg}deg`,
+          );
+        } else {
+          // Only two positions: both arrow keys must land on the ring's one
+          // other position (a 180-degree flip), not silently do nothing and
+          // not compound into a 360-degree round trip.
+          const cw = CC.rotateGroup(iv, m, cwSteps);
+          const ccw = CC.rotateGroup(iv, m, ccwSteps);
+          assert(
+            `k=${k} ring ${m} (${tag}): with two positions, both arrow directions reach the same flip from [${iv}]`,
+            JSON.stringify(cw) === JSON.stringify(ccw) && JSON.stringify(cw) !== JSON.stringify(iv),
+            `cw=[${cw}] ccw=[${ccw}] from=[${iv}]`,
+          );
+        }
       }
     }
   }

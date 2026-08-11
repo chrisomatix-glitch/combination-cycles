@@ -7,8 +7,9 @@
  * dials and the rotate/swap controls via the --color-ring-N custom
  * properties below, so the same ring reads as the same colour everywhere and
  * stays stable across mode switches. Colour is never the only cue: ring 0 is
- * round, ring 1 a diamond, ring 2 a triangle, ring 3 a pentagon, so the
- * distinction survives greyscale printing.
+ * round, ring 1 a diamond, ring 2 a triangle, ring 3 a pentagon, ring 4 a
+ * hexagon and ring 5 a heptagon (k = 6 only), so the distinction survives
+ * greyscale printing.
  */
 
 :root {
@@ -22,6 +23,8 @@
   --color-ring-1: #d55e00; /* Okabe-Ito vermillion */
   --color-ring-2: #009e73; /* Okabe-Ito bluish green */
   --color-ring-3: #cc79a7; /* Okabe-Ito reddish purple */
+  --color-ring-4: #e69f00; /* Okabe-Ito orange    — k = 6 only */
+  --color-ring-5: #56b4e9; /* Okabe-Ito sky blue  — k = 6 only */
   --color-disabled: #d8d8d8;
   --color-warning: #b45309;
 
@@ -102,6 +105,44 @@ body {
 .mode-btn[aria-pressed='true'] {
   border-color: var(--color-ring-0);
   background: color-mix(in srgb, var(--color-ring-0) 15%, white);
+}
+
+.mode-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* Six-interval mode is far larger than the other three (3,840 forms against
+   324) and takes a moment to enumerate the first time it's opened — see
+   app/catalogueCache.js. Shown only while that build is in flight. */
+.mode-loading {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  margin: 0 0 0.5rem;
+}
+
+.mode-loading[hidden] {
+  display: none;
+}
+
+/* Framing copy shown only in six-interval mode (SPEC's Phase 6 brief) — it
+   is far more numerous and less symmetrical than the other three modes, and
+   should not read as an equal peer without that context. */
+.six-interval-note {
+  max-width: 70ch;
+  margin: 0 auto 0.75rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.six-interval-note[hidden] {
+  display: none;
 }
 
 .layout {
@@ -293,6 +334,18 @@ body {
 
 .note--ring3 .note__shape {
   fill: var(--color-ring-3);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.note--ring4 .note__shape {
+  fill: var(--color-ring-4);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.note--ring5 .note__shape {
+  fill: var(--color-ring-5);
   stroke: #ffffff;
   stroke-width: 2;
 }
@@ -509,6 +562,8 @@ body {
 .figure-chord--ring1 { stroke: var(--color-ring-1); }
 .figure-chord--ring2 { stroke: var(--color-ring-2); }
 .figure-chord--ring3 { stroke: var(--color-ring-3); }
+.figure-chord--ring4 { stroke: var(--color-ring-4); }
+.figure-chord--ring5 { stroke: var(--color-ring-5); }
 .figure-chord--mono { stroke: var(--color-ring-0); }
 
 .figure-vertex__dot {
@@ -805,7 +860,7 @@ body {
   outline-offset: 2px;
 }
 
-/* --- Small phones: k = 4 is the busiest mode, so trim spacing further --- */
+/* --- Small phones: k = 6 is the busiest mode, so trim spacing further --- */
 
 @media (max-width: 380px) {
   .dial__option {

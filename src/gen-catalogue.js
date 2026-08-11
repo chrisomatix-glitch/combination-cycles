@@ -4,7 +4,7 @@ import { writeFileSync } from 'fs';
 // No timestamp: the output must be deterministic so CI can detect a stale
 // catalogue by diffing. Git history already records when it was generated.
 const out = { families: {} };
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const cat = CC.buildCatalogue(k);
   out.families[k] = {
     ordinals: cat.length / 2,
@@ -29,14 +29,14 @@ writeFileSync('../data/catalogue.json', JSON.stringify(out, null, 1) + '\n');
 // CSV for the article's tables
 const rows = ['id,name,intervals,partner,retrograde_of,degenerate,reduces_to,'
   + 'berliner,row_forms,palindromic,literal_span_semitones,bounded_span_semitones'];
-for (const k of [2, 3, 4]) for (const c of out.families[k].cycles) {
+for (const k of [2, 3, 4, 6]) for (const c of out.families[k].cycles) {
   rows.push([c.id, c.name, `"${c.intervals.join(' ')}"`, c.partner, c.retrogradeOf || '',
     c.degenerate, c.reducesTo || '', c.berliner || '', c.rowForms, c.palindromic,
     c.literalSpan, c.boundedSpan].join(','));
 }
 writeFileSync('../data/catalogue.csv', rows.join('\n') + '\n');
 
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   const f = out.families[k];
   console.log(`k=${k}: ${f.ordinals} ordinals, ${f.entries} entries `
     + `(${f.genuine} genuine), ${f.berlinerClasses} Berliner classes`);

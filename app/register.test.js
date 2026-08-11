@@ -20,7 +20,7 @@ function assert(name, cond, detail = '') {
 }
 
 // Bounded is CC.placeRegister() unchanged — no re-centring applies.
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   for (const entry of CC.buildCatalogue(k)) {
     const expected = CC.placeRegister(entry.intervals, { mode: 'bounded', closeCycle: true });
     const actual = registeredNotes(entry.intervals, { mode: 'bounded' });
@@ -36,7 +36,7 @@ for (const k of [2, 3, 4]) {
 // that makes "up to eleven octaves" span roughly evenly either side of the
 // centre, rather than starting at 60 and only ever climbing.
 let recentredCount = 0;
-for (const k of [2, 3, 4]) {
+for (const k of [2, 3, 4, 6]) {
   for (const entry of CC.buildCatalogue(k)) {
     const raw = CC.placeRegister(entry.intervals, { mode: 'literal', closeCycle: true });
     const actual = registeredNotes(entry.intervals, { mode: 'literal' });
