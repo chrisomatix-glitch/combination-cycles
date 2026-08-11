@@ -12,6 +12,14 @@ command needs a multi-line payload (e.g. a commit message), write it to a
 temp file and reference the file (e.g. `git commit -F <file>`) rather than
 inlining it.
 
+## Deployment (`.cpanel.yml`)
+
+`.cpanel.yml` copies the whole `app/` directory wholesale and deletes the
+test files — it does not list files by name, because a by-name list has
+broken production three times already (a new module shipped without a
+matching line here). If a deployable file is ever added *outside* `app/` or
+`src/`, it must still be added to `.cpanel.yml` explicitly.
+
 ## No inline `node -e` scripts
 
 Don't verify things with inline `node -e "..."` (or PowerShell equivalents)
